@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+import uuid
 
 
 # Let create model that handle users both client and consultant details
@@ -90,7 +91,13 @@ class Payment(models.Model):
     
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_reference = models.CharField(max_length=100, unique=True, null=True)
+    # Let handle the payment reference 
+    payment_reference = models.CharField(
+        max_length=100, 
+        unique=True, null=True,
+        default=uuid.uuid4,     # This generate reference automatically
+        editable=False
+        )
     status =  models.CharField(
         max_length=20,
         choices=PaymentStatus.choices,
