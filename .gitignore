@@ -1,2 +1,20 @@
+# Environments
 .env
 .venv
+env/
+venv/
+
+# Database
+db.sqlite3
+
+# Python Bytecode (Covers all apps)
+**/__pycache__/
+*.py[cod]
+
+# Media and Static
+/static/
+/media/
+
+# IDEs
+.vscode/
+.idea/
