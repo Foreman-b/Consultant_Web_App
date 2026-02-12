@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ConsultBooking{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">MyBlog</a>
+            
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="#">Booking</a></li>
+                <li><a href="#">Payment</a></li>
+
+                {% if user.is_authenticated %}
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">Profile ▼</a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'profile' %}">My Profile</a>
+                            <hr>
+                            <!-- Re-enabled the Logout Form for security -->
+                            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="logout-btn">Logout</button>
+                            </form>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="login-link">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="register-btn">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- This is where home.html and other pages will load -->
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+
+        <footer class="main-footer">
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 ConsultBooking. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
