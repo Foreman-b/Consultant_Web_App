@@ -12,6 +12,7 @@ class User(AbstractUser):
         CLIENT = "CLIENT", "Client"
         CONSULTANT = "CONSULTANT", "consultant"
 
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CLIENT)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
 
