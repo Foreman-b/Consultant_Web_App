@@ -8,6 +8,8 @@ venv/
 db.sqlite3
 
 # Python Bytecode (Covers all apps
+__pycache__
+*.py[cod]
 **/migrations/
 
 # Media and Static
