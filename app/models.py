@@ -13,6 +13,7 @@ class User(AbstractUser):
         CONSULTANT = "CONSULTANT", "consultant"
 
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CLIENT)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
 
 # Now let create deatisl for consultant profile
 class Consultant_Profile(models.Model):

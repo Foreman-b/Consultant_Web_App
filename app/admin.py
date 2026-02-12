@@ -7,12 +7,12 @@ from .models import (
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'role', 'is_staff')
+    list_display = ('username', 'email', 'phone_number', 'role', 'is_staff')
     fieldsets = UserAdmin.fieldsets + (
-        ('Role Information', {'fields': ('role',)}),
+        ('Role Information', {'fields': ('role', 'phone_number',)}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Role Information', {'fields': ('role',)}),
+        ('Role Information', {'fields': ('role', 'phone_number',)}),
     )
 
 # Let allow adding availability inside the Consultant profile
