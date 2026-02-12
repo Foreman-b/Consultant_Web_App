@@ -13,9 +13,10 @@ db.sqlite3
 **/migrations/
 
 # Media and Static
-/static/
 /media/
 
 # IDEs
 .vscode/
 .idea/
+
+
