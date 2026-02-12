@@ -1,0 +1,140 @@
+.navbar {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 0.8rem 2rem;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin: 0;
+}
+
+.nav-links a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #fff;
+}
+
+/* Dropdown Container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #262626;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+    z-index: 1;
+    border-radius: 4px;
+    right: 0; /* Align to right so it doesn't go off-screen */
+}
+
+/* Links inside dropdown */
+.dropdown-content a, .logout-btn {
+    color: #ccc;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: none;
+    background: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover, .logout-btn:hover {
+    background-color: #333;
+    color: white;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropbtn {
+    cursor: pointer;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #444;
+    margin: 0;
+}
+
+/* Special styling for buttons */
+.register-btn {
+    background-color: #444;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+
+.logo {
+    color: #ffffff !important; /* Forces the color to pure white */
+    text-decoration: none;    /* Removes the underline if it's a link */
+    font-weight: bold;        /* Makes it stand out */
+    font-size: 1.5rem; 
+    margin: 1;       /* Adjust size as needed */
+    padding: 2x
+}
+
+/* Ensure it stays white even if it's a visited link */
+.logo:visited, .logo:hover, .logo:active {
+    color: #ffffff;
+}
+
+
+
+/* Footer Styles */
+.main-footer {
+    background-color: #1a1a1a;
+    color: #b0b0b0;
+    padding: 1rem 2rem 1rem;
+    margin-top: 6rem; /* Keeps it away from page content */
+    font-family: 'Segoe UI', sans-serif;
+    border-top: 1px solid #333;
+}
+
+
+
+.footer-bottom {
+    text-align: center;
+    /* margin-top: 1rem; */
+    /* padding-top: 1rem; */
+    /* border-top: 1px solid #2a2a2a; */
+    font-size: 0.8rem;
+}
+
+
+* {
+    margin: 2;
+    padding: 1;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
