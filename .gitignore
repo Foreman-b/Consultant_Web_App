@@ -13,7 +13,7 @@ db.sqlite3
 **/migrations/
 
 # Media and Static
-/static/
+# /static/
 /media/
 
 # IDEs
