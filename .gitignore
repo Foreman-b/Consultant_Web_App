@@ -9,9 +9,12 @@ db.sqlite3
 db.sqlite3-journal
 
 # Python Bytecode (Covers all apps)
-__pycached__
+**/__pycache__/
+__pycache__
 *.py[cod]
+*.pyc
 **/migrations/
+migrations
 
 # Media and Static
 /media/
