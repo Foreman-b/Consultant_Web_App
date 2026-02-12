@@ -7,8 +7,7 @@ venv/
 # Database
 db.sqlite3
 
-# Python Bytecode (Covers all apps)
-**/__pycache__/
+# Python Bytecode (Covers all apps
 *.py[cod]
 **/migrations/
 
