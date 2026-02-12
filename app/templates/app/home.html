@@ -1,12 +1,36 @@
 {% extends 'app/base_nav_bar.html' %}
 
 {% block content %}
+<section class="hero-section">
+    <div class="hero-content">
+        <h1>Expert Guidance for Your <span class="accent">Next Big Step</span>.</h1>
+        <p>Book a private session with world-class consultants to scale your business, tech, or personal growth.</p>
+        <div class="hero-btns">
+            <a href="{% url 'register' %}" class="btn-primary">Get Started</a>
+            <a href="#services" class="btn-secondary">Learn More</a>
+        </div>
+    </div>
+    <div class="hero-image">
+        <!-- Add a professional stock image of a consultant here -->
+        <div class="image-placeholder"></div>
+    </div>
+</section>
 
-    <h1>Welcome to MyBlog</h1>
-    <p>This is where my latest posts will appear.</p>
-    
-
+<section id="services" class="services-grid">
+    <div class="service-card">
+        <i class="icon-calendar"></i>
+        <h3>Easy Scheduling</h3>
+        <p>Pick a date and time that works best for your busy schedule.</p>
+    </div>
+    <div class="service-card">
+        <i class="icon-secure"></i>
+        <h3>Secure Payments</h3>
+        <p>Fully encrypted transactions for your peace of mind.</p>
+    </div>
+    <div class="service-card">
+        <i class="icon-expert"></i>
+        <h3>Expert Advice</h3>
+        <p>Connect with vetted professionals in your specific industry.</p>
+    </div>
+</section>
 {% endblock %}
-
-
-
