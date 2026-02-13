@@ -1,0 +1,72 @@
+/* Container for the booking form */
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* Styling Django's form.as_p outputs */
+form p {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #34495e;
+}
+
+/* Style the inputs, textareas, and selects */
+form input[type="text"], 
+form input[type="email"], 
+form textarea, 
+form select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dce1e5;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+}
+
+form input:focus, 
+form textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background-color: #2980b9;
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
