@@ -1,6 +1,9 @@
 {% extends 'app/base_nav_bar.html' %}
+{% load static %}
 
-<title> Home </title>
+<head>
+    <title>{% block title %} Home {% endblock %}</title>
+</head>
 
 {% block content %}
 <section class="hero-section">
@@ -11,7 +14,11 @@
             {% comment %} {% if user.is_authenticated %}
             {% else %}
             {% endif %} {% endcomment %}
-            <a href="{% url 'register' %}" class="btn-primary">Get Started</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'book-dashboard' %}" class="btn-primary">Get Started</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-primary">Get Started</a>
+            {% endif %}
             <a href="#services" class="btn-secondary">Learn More</a>
         </div>
     </div>
