@@ -5,7 +5,7 @@ The platform supports authentication, structured booking management, and role-co
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
 This system is designed as a single-consultant booking platform where:
 
@@ -19,7 +19,7 @@ The application follows Django’s MVT architecture and enforces clean role-base
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 ### Backend Stack
 - Python 3.13  
@@ -36,7 +36,7 @@ The application follows Django’s MVT architecture and enforces clean role-base
 
 ---
 
-## 👥 User Roles
+## User Roles
 
 ### Client
 - Register and authenticate  
@@ -56,7 +56,7 @@ Role escalation is strictly controlled by the admin.
 
 ---
 
-## 🗂 Database Models
+## Database Models
 
 - **User** (Custom model with role system)  
 - **Booking**  
@@ -70,7 +70,7 @@ Role escalation is strictly controlled by the admin.
 
 ---
 
-## 📊 Features Implemented
+## Features Implemented
 
 - Environment configuration  
 - Custom user authentication system  
@@ -82,7 +82,7 @@ Role escalation is strictly controlled by the admin.
 
 ---
 
-## 🔐 Security Design
+## Security Design
 
 - Default role: CLIENT  
 - Role field not exposed during registration  
@@ -93,7 +93,7 @@ Role escalation is strictly controlled by the admin.
 
 ---
 
-## 🧪 Development Status
+## Development Status
 
 ✔ Environment setup completed  
 ✔ Models implemented  
