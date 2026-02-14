@@ -1,11 +1,16 @@
 {% extends 'app/base_nav_bar.html' %}
 
+<title> Home </title>
+
 {% block content %}
 <section class="hero-section">
     <div class="hero-content">
         <h1>Expert Guidance for Your <span class="accent">Next Big Step</span>.</h1>
         <p>Book a private session with world-class consultants to scale your business, tech, or personal growth.</p>
         <div class="hero-btns">
+            {% comment %} {% if user.is_authenticated %}
+            {% else %}
+            {% endif %} {% endcomment %}
             <a href="{% url 'register' %}" class="btn-primary">Get Started</a>
             <a href="#services" class="btn-secondary">Learn More</a>
         </div>

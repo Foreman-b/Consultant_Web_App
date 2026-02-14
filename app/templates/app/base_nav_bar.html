@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/book_dashboard.css' %}">
+    
 </head>
 <body>
     <nav class="navbar">
@@ -16,7 +18,7 @@
             
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="#">Booking</a></li>
+                <li><a href="{% url 'book-dashboard' %}">Booking</a></li>
                 <li><a href="#">Payment</a></li>
 
                 {% if user.is_authenticated %}
@@ -50,7 +52,7 @@
         <footer class="main-footer">
         
         <div class="footer-bottom">
-            <p>&copy; 2024 ConsultBooking. All rights reserved.</p>
+            <p>&copy; 2026 ConsultBooking. All rights reserved.</p>
         </div>
     </footer>
 

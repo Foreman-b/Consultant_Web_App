@@ -25,13 +25,20 @@ class Consultant_Profile(models.Model):
     )
     specialization = models.CharField(max_length=100)
     bio = models.TextField(blank=True, null=True)
-    meeting_platform = models.CharField(max_length=50, blank=True, null=True)
-    meeting_link = models.URLField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # def __str__(self):
+    #     return f"{self.user.username} - {self.specialization}"
+    # def __str__(self):
+    #     if self.user:
+    #         return f"{self.user.username} - {self.specialization}"
+    #     return f"No User Assigned - {self.specialization}"
     def __str__(self):
-        return f"{self.user.username} - {self.specialization}"
+        # Always check if self.user exists to avoid the AttributeError
+        if self.user:
+            return f"{self.user.username} ({self.specialization})"
+        return f"Profile ID {self.id} (No User Linked)"
 
 class Availability(models.Model):
     consultant = models.ForeignKey(Consultant_Profile, on_delete=models.CASCADE, related_name='availabilities')
@@ -74,6 +81,8 @@ class Booking(models.Model):
         related_name='bookings'
         )
     reason_for_session = models.TextField()
+    meeting_platform = models.CharField(max_length=50, blank=True, null=True)
+    meeting_link = models.URLField(max_length=255, blank=True, null=True)
     status = models.CharField(
         max_length=20,
         choices=StatusChoices.choices,
@@ -81,8 +90,21 @@ class Booking(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Booking: {self.client.username} -> {self.consultant.username} ({self.availability.date})"
+    # def __str__(self):
+    #     return f"Booking: {self.client.username} -> {self.consultant.username} ({self.availability.date})"
+    # app/models.py
+
+def __str__(self):
+    # Use .user.username instead of .username for the consultant
+    client_name = self.client.username if self.client else "No Client"
+    
+    # Hop through the 'user' relationship of the Consultant_Profile
+    consultant_name = self.consultant.user.username if self.consultant and self.consultant.user else "No Consultant"
+    
+    date = self.availability.date if self.availability else "No Date"
+    
+    return f"Booking: {client_name} -> {consultant_name} ({date})"
+
 
 
 class Payment(models.Model):
