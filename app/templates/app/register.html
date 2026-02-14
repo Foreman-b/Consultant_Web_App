@@ -1,6 +1,11 @@
 {% extends 'app/base_nav_bar.html' %}
 {% load static %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <title>{% block title %} Register {% endblock %}</title>
+{% endblock %}
+
 {% block content %}
 <div class="register-wrapper">
     <div class="register-card">

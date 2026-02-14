@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Availability, Booking
+from .models import Availability, Booking, User
 from .forms import (
     UserRegisterForm, ConsultantProfileForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm,
@@ -81,3 +81,56 @@ def book_session(request, availability_id):
         form = BookingForm()
 
     return render(request, "app/book_session.html", {"form": form})
+
+
+@login_required
+def consultant_dash(request):
+    # Check if the user is a consultant
+    if request.user.role == 'CONSULTANT':
+        # Option A: Get ALL bookings in the system
+        all_bookings = Booking.objects.all().order_by('-created_at')
+        
+        # Option B: Only get bookings assigned to THIS consultant (if field exists)
+        # all_bookings = Booking.objects.filter(consultant=request.user).order_by('-date')
+    else:
+        # Redirect or handle non-consultants
+        all_bookings = []
+
+    return render(request, 'app/consultant_dashboard.html', {'all_bookings': all_bookings})
+
+
+from django.views.decorators.http import require_POST
+
+@require_POST
+@login_required
+def update_booking_status(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    
+    # Optional: Security check to ensure only the consultant can change status
+    # if booking.consultant.user != request.user:
+    #     return HttpResponseForbidden()
+
+    new_status = request.POST.get('status')
+    
+    # Check if the submitted status is valid based on your model choices
+    if new_status in [choice[0] for choice in Booking.StatusChoices.choices]:
+        booking.status = new_status
+        booking.save()
+        
+    return redirect('consultant-dash')
+
+
+@require_POST
+@login_required
+def update_meeting_link(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    
+    # Security: Only the assigned consultant can edit this specific booking
+    if booking.consultant.user != request.user:
+        return redirect('consultant-dash')
+
+    new_link = request.POST.get('meeting_link')
+    booking.meeting_link = new_link # Direct assignment to Booking model
+    booking.save()
+    
+    return redirect('consultant-dash')

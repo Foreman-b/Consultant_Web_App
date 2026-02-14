@@ -1,7 +1,20 @@
 {% extends 'app/base_nav_bar.html' %}
 {% load static %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>{% block title %} Login {% endblock %}</title>
+{% endblock %}
+
+
+
+{% comment %} <head>
+    <title>{% block title %} Login {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head> {% endcomment %}
+
 {% block content %}
+
 <div class="login-wrapper">
     <div class="login-card">
         <h2> Login</h2>
@@ -17,4 +30,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

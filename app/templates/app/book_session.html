@@ -1,9 +1,10 @@
 {% extends "app/base_nav_bar.html" %}
 {% load static %}
-<head>
+
+{% block extra_head %}
     <title>{% block title %} Book Session {% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/book_session.css' %}">
-</head>
+{% endblock %}
 
 {% block content %}
 <!-- Link to your CSS file here if not using a <style> block -->
