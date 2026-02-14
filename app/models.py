@@ -25,8 +25,6 @@ class Consultant_Profile(models.Model):
     )
     specialization = models.CharField(max_length=100)
     bio = models.TextField(blank=True, null=True)
-    meeting_platform = models.CharField(max_length=50, blank=True, null=True)
-    meeting_link = models.URLField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -83,6 +81,8 @@ class Booking(models.Model):
         related_name='bookings'
         )
     reason_for_session = models.TextField()
+    meeting_platform = models.CharField(max_length=50, blank=True, null=True)
+    meeting_link = models.URLField(max_length=255, blank=True, null=True)
     status = models.CharField(
         max_length=20,
         choices=StatusChoices.choices,
