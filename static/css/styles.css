@@ -7,7 +7,7 @@
 
 .nav-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex start;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
@@ -95,8 +95,8 @@ hr {
     text-decoration: none;    /* Removes the underline if it's a link */
     font-weight: bold;        /* Makes it stand out */
     font-size: 1.5rem; 
-    margin: 1;       /* Adjust size as needed */
-    padding: 2x
+    margin: 0;       /* Adjust size as needed */
+    padding: 0x
 }
 
 /* Ensure it stays white even if it's a visited link */
@@ -148,6 +148,13 @@ body {
 
 
 /* Hero Section */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .hero-section {
     display: flex;
     align-items: center;
@@ -240,8 +247,6 @@ body {
     color: #777;
     font-size: 0.95rem;
 }
-
-
 
 
 

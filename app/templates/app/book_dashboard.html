@@ -1,4 +1,11 @@
 {% extends "app/base_nav_bar.html" %}
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/book_dashboard.css' %}">
+    <title>{% block title %} Book Dashboard {% endblock %}</title>
+</head>
+
 {% block content %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -17,7 +24,7 @@
                             {{ booking.availability.start_time }}
                         </p>
                         
-                        <p class="reason-text small"> Reason for Session: "{{ booking.reason_for_session|default:'No reason provided' }}"</p>
+                        <p class="reason-text small"> Reason for Session: "{{ booking.reason_for_session|default:'No reason provided' }}"</p> <br><br>
                         
                         <div class="mt-auto">
                             <div class="d-flex justify-content-between align-items-center">

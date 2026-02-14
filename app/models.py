@@ -15,6 +15,14 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CLIENT)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    
+    @property
+    def is_consultant(self):
+        return self.role == self.Role.CONSULTANT
+
+    @property
+    def is_client(self):
+        return self.role == self.Role.CLIENT
 
 # Now let create deatisl for consultant profile
 class Consultant_Profile(models.Model):
