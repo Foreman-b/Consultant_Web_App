@@ -23,7 +23,7 @@ class ConsultantProfileForm(forms.ModelForm):
 
     class Meta:
         model = Consultant_Profile
-        fields = ('specialization', 'bio', 'meeting_platform', 'meeting_link', 'is_active',)
+        fields = ('specialization', 'bio', 'is_active',)
 
 class AvailabilityForm(forms.ModelForm):
 

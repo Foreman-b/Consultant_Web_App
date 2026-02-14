@@ -14,7 +14,7 @@
                         <h5 class="card-title mb-1">Session with {{ booking.consultant.user.username }}</h5>
                         <p class="text-muted mb-2">
                             <i class="bi bi-calendar"></i> {{ booking.availability.date }} 
-                            at {{ booking.availability.start_time }}
+                            {{ booking.availability.start_time }}
                         </p>
                         
                         <p class="reason-text small"> Reason for Session: "{{ booking.reason_for_session|default:'No reason provided' }}"</p>
@@ -24,11 +24,13 @@
                                 <span class="badge {% if booking.status == 'Confirmed' %}bg-success{% else %}bg-warning{% endif %}">
                                     {{ booking.status }}
                                 </span>
+                        
                                 
-                                {% if booking.consultant.meeting_link %}
-                                    <a href="{{ booking.consultant.meeting_link }}" target="_blank" class="btn btn-primary btn-sm">
+                                {% if booking.meeting_link %}
+                                    <a href="{{ booking.meeting_link }}" target="_blank" class="btn btn-primary btn-sm">
                                         Join Meeting
                                     </a>
+                                
                                 {% endif %}
                             </div>
                         </div>
@@ -51,7 +53,7 @@
 {% if user.is_authenticated %}
     {% for slot in availability_list %}
     <!-- Ensure 'slot.id' is not empty -->
-    <button type="submit" class"btn-primary""><a href="{% url 'book-session' slot.id %}">Book Now </a></button>
+    <button type="submit" class"btn-primary"><a href="{% url 'book-session' slot.id %}">Book Now </a></button>
 {% endfor %}
 
 {% else %}
