@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Availability, Booking, User, Payment
+from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile
 from .forms import (
-    UserRegisterForm, ConsultantProfileForm,
+    UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm,
 )
 from django.contrib.auth import authenticate, login, logout
@@ -262,31 +262,56 @@ def verify_payment(request):
     return redirect("book-dashboard")
    
    
-   
-    # headers = {
-    #     "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
-    # }
 
-    # # Let call paystack verify endpoint
-    # response = request.get(
-    #     f"https://api.paystack.co/transaction/verify/{reference}",
+# @login_required
+# def profile_settings(request):
+    if request.method == 'POST':
+        # User form handles text data
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        
+        if request.user.role == 'CONSULTANT':
+            # Profile form handles text (POST) AND images (FILES)
+            p_form = ConsultantProfileForm(
+                request.POST, 
+                request.FILES, # This is the crucial addition!
+                instance=request.user.consultant_profile
+            )
+        else:
+            user = request.user
+            profile = user
+            form_class = UserUpdateForm
 
-    #     headers = headers,
-    # )
+        if u_form.is_valid() and (p_form is None or p_form.is_valid()):
+            u_form.save()
+            if p_form:
+                p_form.save()
+            messages.success(request, "Your profile image has been updated!")
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ConsultantProfileForm(instance=request.user.consultant_profile) if request.user.role == 'CONSULTANT' else None
 
-    # result = response.json()
+    return render(request, 'app/accounts.html', {'u_form': u_form, 'p_form': p_form})
 
-    # if result["data"]["status"] == "success":
-    #     payment.status = Payment.PaymentStatus.SUCCESS
-    #     payment.paid_at = timezone.now()
-    #     payment.save()
+@login_required
+def profile_settings(request):
+     # Determine which profile type we are dealing with
+    user = request.user.profile
+    if request.user.role == 'CONSULTANT':
+        profile, created = Consultant_Profile.objects.get_or_create(user=request.user)
+        form_class = ConsultantProfileForm
+    else:
+        user = request.user.profile
+        profile = user
+        form_class = UserUpdateForm
 
-    #     booking = payment.booking
-    #     booking.status = Booking.StatusChoices.CONFIRMED
-    #     booking.save()
+    if request.method == 'POST':
+        form = form_class(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+    else:
+        form = form_class(instance=profile)
 
-    # else:
-    #     payment.status = Payment.PaymentStatus.FAILED
-    #     payment.save()
-
-    # return redirect("book-dashboard")
+    return render(request, 'app/accounts.html', {'form': form})

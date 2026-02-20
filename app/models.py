@@ -5,7 +5,7 @@ import uuid
 
 
 # Let create model that handle users both client and consultant details
-class User(AbstractUser):
+class CustomUser(AbstractUser):
 
     class Role(models.TextChoices):
         # For our user let define each role for both client and consultant
@@ -15,6 +15,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CLIENT)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to="upload/profile_picture", null=True, blank=True)
     
     @property
     def is_consultant(self):
@@ -35,6 +36,7 @@ class Consultant_Profile(models.Model):
     bio = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    profile_picture = models.ImageField(upload_to="upload/profile_picture", null=True, blank=True)
 
     # def __str__(self):
     #     return f"{self.user.username} - {self.specialization}"
@@ -47,6 +49,7 @@ class Consultant_Profile(models.Model):
         if self.user:
             return f"{self.user.username} ({self.specialization})"
         return f"Profile ID {self.id} (No User Linked)"
+    
 
 class Availability(models.Model):
     consultant = models.ForeignKey(Consultant_Profile, on_delete=models.CASCADE, related_name='availabilities')

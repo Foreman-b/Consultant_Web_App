@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import (
-    User, Consultant_Profile, Availability,
+    CustomUser, Consultant_Profile, Availability,
     Booking, Payment, Review
 )
 
-@admin.register(User)
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'phone_number', 'role', 'is_staff')
     fieldsets = (
@@ -15,7 +15,12 @@ class CustomUserAdmin(UserAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
         ('Role Information', {'fields': ('role',)}),
     )
-
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'phone_number', 'role'),
+        }),
+    )
 # Let allow adding availability inside the Consultant profile
 class AvailabilityInline(admin.TabularInline):
     model = Availability
