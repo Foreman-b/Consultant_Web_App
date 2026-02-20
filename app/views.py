@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Availability, Booking, User
+from .models import Availability, Booking, User, Payment
 from .forms import (
     UserRegisterForm, ConsultantProfileForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm,
@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.utils import timezone
 
 
 
@@ -134,3 +136,82 @@ def update_meeting_link(request, booking_id):
     booking.save()
     
     return redirect('consultant-dash')
+
+
+
+
+@login_required
+def initialize_payment(request, booking_id):
+    # Let fetch booking and confirm the ownership
+    booking = get_object_or_404(
+        Booking,
+        id=booking_id,
+        client=request.user,
+        status=Booking.Status.Choices.PENDING
+    )
+    
+    # Now let create payment record(server-controlled)
+    payment = Payment.objects.create(
+        booking =booking,
+        amount = 10000,
+    )
+
+    # Let prepare Paystack request here
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "email": request.user.email,
+        "amount": payment.amount,
+        "reference": str(payment.payment_reference),
+        "callback_url": request.build_absolute_url("/verify-payment/"),
+    }
+
+    # Right here let call Paystack initialize endpoint
+    response = request.post(
+        "https://api.paystack.co/transaction/initialize",
+        json=data,
+        headers=headers,
+    )
+
+    response_data = response.json()
+
+    # Let redirect user to Paystack chekout
+    return redirect(response_data["data"] ["authorization_url"])
+
+
+@login_required
+def verify_payment(request):
+    reference = request.GET.get("reference")
+
+    payment = get_object_or_404(Payment, payment_reference=reference)
+
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+    }
+
+    # Let call paystack verify endpoint
+    response = request.get(
+        f"https://api.paystack.co/transaction/verify/{reference}",
+
+        headers = headers,
+    )
+
+    result = response.json()
+
+    if result["data"]["status"] == "success":
+        payment.status = Payment.PaymentStatus.SUCCESS
+        payment.paid_at = timezone.now()
+        payment.save()
+
+        booking = payment.booking
+        booking.status = Booking.StatusChoices.CONFIRMED
+        booking.save()
+
+    else:
+        payment.status = Payment.PaymentStatus.FAILED
+        payment.save()
+
+    return redirect("booking-dashboard")
