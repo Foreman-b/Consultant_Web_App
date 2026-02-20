@@ -101,3 +101,26 @@
 .btn-register:active {
     transform: translateY(0);
 }
+
+/* Footer link (Register here) */
+.login-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-footer p {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.login-footer a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.3s;
+}
+
+.login-footer a:hover {
+    border-bottom: 1px solid #ffffff;
+}

@@ -98,21 +98,29 @@ class Booking(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+   
     # def __str__(self):
     #     return f"Booking: {self.client.username} -> {self.consultant.username} ({self.availability.date})"
     # app/models.py
 
-def __str__(self):
-    # Use .user.username instead of .username for the consultant
-    client_name = self.client.username if self.client else "No Client"
-    
-    # Hop through the 'user' relationship of the Consultant_Profile
-    consultant_name = self.consultant.user.username if self.consultant and self.consultant.user else "No Consultant"
-    
-    date = self.availability.date if self.availability else "No Date"
-    
-    return f"Booking: {client_name} -> {consultant_name} ({date})"
+    def __str__(self):
+        # Use .user.username instead of .username for the consultant
+        client_name = self.client.username if self.client else "No Client"
+        
+        # Hop through the 'user' relationship of the Consultant_Profile
+        consultant_name = self.consultant.user.username if self.consultant and self.consultant.user else "No Consultant"
+        
+        date = self.availability.date if self.availability else "No Date"
+        
+        return f"Booking: {client_name} -> {consultant_name} ({date})"
 
+    @property
+    def is_paid(self):
+        # This checks if a related payment exists AND is successful
+        # Using hasattr to avoid RelatedObjectDoesNotExist errors
+        if hasattr(self, 'payment'): 
+            return self.payment.status == 'SUCCESS'
+        return False
 
 
 class Payment(models.Model):

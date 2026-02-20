@@ -156,12 +156,23 @@ body {
 }
 
 .hero-section {
+    /* Set height to exactly 100% of the viewport height */
+    min-height: 100vh; 
+    
+    /* Center the content inside */
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    padding: 100px 5%;
-    background-color: #121212;
-    color: white;
+    
+    /* Ensure background covers the whole area */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* Optional: Add some padding so content doesn't touch edges on mobile */
+    padding: 20px;
+    text-align: center;
 }
 
 .hero-content {

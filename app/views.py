@@ -10,6 +10,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.utils import timezone
+import requests
+from django.contrib import messages
+import uuid
 
 
 
@@ -147,71 +150,143 @@ def initialize_payment(request, booking_id):
         Booking,
         id=booking_id,
         client=request.user,
-        status=Booking.Status.Choices.PENDING
+        status=Booking.StatusChoices.PENDING
     )
     
-    # Now let create payment record(server-controlled)
-    payment = Payment.objects.create(
+    amount = 500000     # this N5,000.00 in kobo
+
+    # Let create re-usable payment
+    payment, create = Payment.objects.get_or_create(
         booking =booking,
-        amount = 10000,
+        defaults={"amount": amount}
     )
 
-    # Let prepare Paystack request here
+    # Now let prevent user from double payment
+    if payment.status == Payment.PaymentStatus.SUCCESS:
+        return redirect("book-dashboard")
+
+    # Let handle Paystack API Setup
+    url = "https://api.paystack.co/transaction/initialize"
     headers = {
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
         "Content-Type": "application/json",
     }
 
-    data = {
+    # Let attempt to initialize
+    payload = {
         "email": request.user.email,
-        "amount": payment.amount,
+        "amount": int(payment.amount),
         "reference": str(payment.payment_reference),
-        "callback_url": request.build_absolute_url("/verify-payment/"),
+        "callback_url": request.build_absolute_uri("/verify-payment/"),
     }
 
     # Right here let call Paystack initialize endpoint
-    response = request.post(
-        "https://api.paystack.co/transaction/initialize",
-        json=data,
-        headers=headers,
-    )
+    try:
+        response = requests.post(
+            url, 
+            json=payload,
+            headers=headers,
+        )
+        response_data = response.json()
+        print("DEBUG PAYSTACK DATA:", response_data)
+        # Let handle duplicate reference
+        if not response_data.get("status") and "reference" in response_data.get("message", "").lower():
+            #Let it generate new reference and try one more time
+            payment.payment_reference = str(uuid.uuid4())
+            payment.save()
 
-    response_data = response.json()
+
+            payload["reference"] = payment.payment_reference
+            response = requests.post(
+                url, 
+                json=payload,
+                headers=headers
+            )
+            response_data = response.json()
+            print("DEBUG PAYSTACK DATA:", response_data)
+
+            # Let check one time before redirecting
+            if response_data.get("status"):
+                return redirect(response_data["data"]["authorization_url"])
+            else:
+                messages.error(request, f"Paystac error: {response_data.get('message')}")   
+    except Exception as e:
+        messages.error(request, f"Connrection Error: {str(e)}")
 
     # Let redirect user to Paystack chekout
-    return redirect(response_data["data"] ["authorization_url"])
+    return redirect("book-dashboard")
 
 
 @login_required
 def verify_payment(request):
     reference = request.GET.get("reference")
 
-    payment = get_object_or_404(Payment, payment_reference=reference)
-
+    if not reference:
+        messages.error(request, "No payment reference found")
+        return redirect("book-dashbaord")
+    
+    # Now let call Paystack to verify the status
+    url = f"https://api.paystack.co/transaction/verify/{reference}"
     headers = {
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
     }
 
-    # Let call paystack verify endpoint
-    response = request.get(
-        f"https://api.paystack.co/transaction/verify/{reference}",
 
-        headers = headers,
+    response = requests.get(
+        url,
+        headers=headers
     )
+    response_data = response.json()
 
-    result = response.json()
+    print("DEBUG PAYSTACK DATA:", response_data)
 
-    if result["data"]["status"] == "success":
-        payment.status = Payment.PaymentStatus.SUCCESS
-        payment.paid_at = timezone.now()
-        payment.save()
+    if response_data.get("status") and response_data["data"]["status"] == "success":
+        
+        # Let update the database here
+        payment = get_object_or_404(Payment, payment_reference=reference)
 
-        booking = payment.booking
-        booking.status = Booking.StatusChoices.CONFIRMED
-        booking.save()
+        if payment.status != Payment.PaymentStatus.SUCCESS:
+            payment.status = Payment.PaymentStatus.SUCCESS
+            payment.paid_at = timezone.now()
+            payment.save()
 
-    else:
-        payment.status = Payment.PaymentStatus.FAILED
-        payment.save()
+            # Now let update the book status
+            booking = payment.booking
+            booking.status = Booking.StatusChoices.CONFIRMED
+            booking.save()
 
-    return redirect("booking-dashboard")
+            messages.success(request, "Payment successful! Your Booking is confirmed.")
+            return redirect('book-dashboard')
+        else:
+            messages.error(request, "Payment verification failed. Please contact support.")
+    return redirect("book-dashboard")
+   
+   
+   
+    # headers = {
+    #     "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+    # }
+
+    # # Let call paystack verify endpoint
+    # response = request.get(
+    #     f"https://api.paystack.co/transaction/verify/{reference}",
+
+    #     headers = headers,
+    # )
+
+    # result = response.json()
+
+    # if result["data"]["status"] == "success":
+    #     payment.status = Payment.PaymentStatus.SUCCESS
+    #     payment.paid_at = timezone.now()
+    #     payment.save()
+
+    #     booking = payment.booking
+    #     booking.status = Booking.StatusChoices.CONFIRMED
+    #     booking.save()
+
+    # else:
+    #     payment.status = Payment.PaymentStatus.FAILED
+    #     payment.save()
+
+    # return redirect("book-dashboard")

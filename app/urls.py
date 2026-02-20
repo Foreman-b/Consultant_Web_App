@@ -13,4 +13,7 @@ urlpatterns = [
     path('update-status/<int:booking_id>/', views.update_booking_status, name='update-status'),
     path('update-link/<int:booking_id>/', views.update_meeting_link, name='update-link'),
 
+    # Now let add payment urls
+    path('pay/<int:booking_id>/', views.initialize_payment, name='initialize-payment'),
+    path('verify-payment/', views.verify_payment, name='verify-payment'),
 ]

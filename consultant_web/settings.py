@@ -1,10 +1,11 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -44,10 +45,11 @@ ROOT_URLCONF = 'consultant_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -117,3 +119,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'app.User'
 
 LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dasboard'
+LOGOUT_REDIRECT_URL = 'login'
+
+
+# PAYSTACK PAYMENT SETTINGS
+PAYSTACK_PUBLIC_KEY = os.getenv('PK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = os.getenv('PK_SECRET_KEY')
