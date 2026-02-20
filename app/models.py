@@ -121,12 +121,17 @@ class Payment(models.Model):
         SUCCESS = 'success', 'Success'
         FAILED = 'failed', 'Failed'
     
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='payments')
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    booking = models.OneToOneField(
+        Booking, 
+        on_delete=models.CASCADE, 
+        related_name='payment'
+    )
+    amount = models.PositiveIntegerField()
     # Let handle the payment reference 
     payment_reference = models.CharField(
         max_length=100, 
-        unique=True, null=True,
+        unique=True, 
+        null=True,
         default=uuid.uuid4,     # This generate reference automatically
         editable=False
         )
@@ -135,7 +140,7 @@ class Payment(models.Model):
         choices=PaymentStatus.choices,
         default=PaymentStatus.PENDING
     )
-    paid_at = models.DateTimeField(auto_now_add=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Payment: {self.amount} - {self.status} (Ref {self.payment_reference})"
