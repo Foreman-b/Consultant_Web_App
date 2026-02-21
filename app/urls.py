@@ -18,10 +18,11 @@ urlpatterns = [
     # Now let add payment urls
     path('pay/<int:booking_id>/', views.initialize_payment, name='initialize-payment'),
     path('verify-payment/', views.verify_payment, name='verify-payment'),
+    path('payment-dash/', views.payment_dash, name='payment-dash'),
 
 
     # Let path for client profile
-    path("profile/", views.profile_settings, name="profile"),
+    path('profile/', views.consultant_profile, name='profile'),
 
 ] 
 

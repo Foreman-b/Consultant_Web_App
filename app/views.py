@@ -262,56 +262,84 @@ def verify_payment(request):
     return redirect("book-dashboard")
    
    
-
 # @login_required
-# def profile_settings(request):
-    if request.method == 'POST':
-        # User form handles text data
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        
-        if request.user.role == 'CONSULTANT':
-            # Profile form handles text (POST) AND images (FILES)
-            p_form = ConsultantProfileForm(
-                request.POST, 
-                request.FILES, # This is the crucial addition!
-                instance=request.user.consultant_profile
-            )
-        else:
-            user = request.user
-            profile = user
-            form_class = UserUpdateForm
+# def consultant_profile(request):
+#     user = request.user
+#     slots = None
+#     form = None
+#      # Determine which profile type we are dealing with
+#     user_profile = request.user.profile 
+#     consultant_user = get_object_or_404(CustomUser, username=username, role='CONSULTANT')
+#     profile = consultant_user.profile
+#     slots = profile.availabilities.all().order_by('date')
 
-        if u_form.is_valid() and (p_form is None or p_form.is_valid()):
-            u_form.save()
-            if p_form:
-                p_form.save()
-            messages.success(request, "Your profile image has been updated!")
-            return redirect('profile')
-    else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ConsultantProfileForm(instance=request.user.consultant_profile) if request.user.role == 'CONSULTANT' else None
+#     if request.method == 'POST':
+#         # request.FILES must be the second argument!
+#         form = ConsultantProfileForm(request.POST, request.FILES, instance=user_profile)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Your profile has been updated!')
+#             return redirect('consultant-profile')
+#     else:
+#         form = ConsultantProfileForm(instance=user_profile)
 
-    return render(request, 'app/accounts.html', {'u_form': u_form, 'p_form': p_form})
+#     return render(request, 'app/consultant_accounts.html', {'form': form})
 
 @login_required
-def profile_settings(request):
-     # Determine which profile type we are dealing with
-    user = request.user.profile
-    if request.user.role == 'CONSULTANT':
-        profile, created = Consultant_Profile.objects.get_or_create(user=request.user)
-        form_class = ConsultantProfileForm
-    else:
-        user = request.user.profile
-        profile = user
-        form_class = UserUpdateForm
+def consultant_profile(request):
+    user = request.user
+    slots = None
+    form = None
 
-    if request.method == 'POST':
-        form = form_class(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('profile')
-    else:
-        form = form_class(instance=profile)
+    # Logic for Consultants
+    if user.role == 'CONSULTANT':
+        # Get profile or create one if it doesn't exist (prevents RelatedObjectDoesNotExist)
+        profile, created = Consultant_Profile.objects.get_or_create(user=user)
+        slots = profile.availabilities.all().order_by('date')
+        
+        if request.method == 'POST':
+            form = ConsultantProfileForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Consultant profile updated!")
+                return redirect('profile')
+        else:
+            form = ConsultantProfileForm(instance=profile)
+        
+    # Logic for Clients
+    elif user.role == 'CLIENT':
+        if request.method == 'POST':
+            # Assuming you have a basic User form for Clients
+            form = UserUpdateForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Client settings updated!")
+                return redirect('profile')
+        else:
+            form = UserUpdateForm(instance=user)
 
-    return render(request, 'app/accounts.html', {'form': form})
+    return render(request, 'app/accounts.html', {
+        'form': form,
+        'slots': slots,
+        'user': user
+    })
+
+@login_required
+def payment_dash(request):
+    # Check if the user is a consultant
+    if request.user.role == 'CLIENT':
+        # Option A: Get ALL bookings in the system
+        all_payments = Payment.objects.all().order_by('-paid_at')
+        all_bookings = Booking.objects.all().order_by('-created_at')
+
+    elif request.user.role == 'CONSULTANT':
+        all_payments = Payment.objects.all().order_by('-paid_at')
+        all_bookings = Booking.objects.all().order_by('-created_at')
+        
+        # Option B: Only get bookings assigned to THIS consultant (if field exists)
+        # all_bookings = Booking.objects.filter(consultant=request.user).order_by('-date')
+    else:
+        # Redirect or handle non-consultants
+        all_payments, all_bookings = []
+
+    return render(request, 'app/payment_dash.html', {'all_payments': all_payments, 'all_bookings': all_bookings})

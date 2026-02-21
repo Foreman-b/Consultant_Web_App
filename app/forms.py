@@ -2,12 +2,13 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Consultant_Profile, Availability, Booking, Payment, Review
 from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory
 
 class UserRegisterForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number',)
+        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'profile_picture')
 
     def clean_email(self):
         """
@@ -23,7 +24,7 @@ class ConsultantProfileForm(forms.ModelForm):
 
     class Meta:
         model = Consultant_Profile
-        fields = ('specialization', 'bio', 'is_active', 'profile_picture',)
+        fields = ('specialization', 'bio', 'is_active')
 
 class AvailabilityForm(forms.ModelForm):
 
@@ -33,6 +34,14 @@ class AvailabilityForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+# This creates a group of forms for the Availability model
+AvailabilityFormSet = forms.inlineformset_factory(
+    Consultant_Profile, 
+    Availability, 
+    form=AvailabilityForm, 
+    extra=1,      # How many empty slots to show by default
+    can_delete=True # Allows consultants to remove a date
+)
 
 class BookingForm(forms.ModelForm):
 
