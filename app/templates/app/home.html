@@ -27,7 +27,13 @@
         <p class="text-light">Book a private session with world-class consultants to scale your business, tech, or personal growth.</p>
         <div class="hero-btns",>
             {% if user.is_authenticated %}
+             {% if user.role == 'CLIENT' %}
                 <a href="{% url 'book-dashboard' %}" class="btn-primary">Get Started</a>
+            {% elif user.is_consultant %}
+            {% if user.role == 'CONSULTANT' %}
+                <a href="{% url 'consultant-dash' %}" class="btn-primary">Get Started</a>
+                {% endif %}
+                {% endif %}
             {% else %}
                 <a href="{% url 'login' %}" class="btn-primary">Get Started</a>
             {% endif %}
