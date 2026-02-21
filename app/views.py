@@ -188,7 +188,7 @@ def initialize_payment(request, booking_id):
             headers=headers,
         )
         response_data = response.json()
-        print("DEBUG PAYSTACK DATA:", response_data)
+        # print("DEBUG PAYSTACK DATA:", response_data)
         # Let handle duplicate reference
         if not response_data.get("status") and "reference" in response_data.get("message", "").lower():
             #Let it generate new reference and try one more time
@@ -203,7 +203,7 @@ def initialize_payment(request, booking_id):
                 headers=headers
             )
             response_data = response.json()
-            print("DEBUG PAYSTACK DATA:", response_data)
+            # print("DEBUG PAYSTACK DATA:", response_data)
 
             # Let check one time before redirecting
             if response_data.get("status"):
@@ -238,7 +238,7 @@ def verify_payment(request):
     )
     response_data = response.json()
 
-    print("DEBUG PAYSTACK DATA:", response_data)
+    # print("DEBUG PAYSTACK DATA:", response_data)
 
     if response_data.get("status") and response_data["data"]["status"] == "success":
         
@@ -261,29 +261,7 @@ def verify_payment(request):
             messages.error(request, "Payment verification failed. Please contact support.")
     return redirect("book-dashboard")
    
-   
-# @login_required
-# def consultant_profile(request):
-#     user = request.user
-#     slots = None
-#     form = None
-#      # Determine which profile type we are dealing with
-#     user_profile = request.user.profile 
-#     consultant_user = get_object_or_404(CustomUser, username=username, role='CONSULTANT')
-#     profile = consultant_user.profile
-#     slots = profile.availabilities.all().order_by('date')
 
-#     if request.method == 'POST':
-#         # request.FILES must be the second argument!
-#         form = ConsultantProfileForm(request.POST, request.FILES, instance=user_profile)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Your profile has been updated!')
-#             return redirect('consultant-profile')
-#     else:
-#         form = ConsultantProfileForm(instance=user_profile)
-
-#     return render(request, 'app/consultant_accounts.html', {'form': form})
 
 @login_required
 def consultant_profile(request):
@@ -293,7 +271,7 @@ def consultant_profile(request):
 
     # Logic for Consultants
     if user.role == 'CONSULTANT':
-        # Get profile or create one if it doesn't exist (prevents RelatedObjectDoesNotExist)
+        # Let get profile or create one if it doesn't exist (prevents RelatedObjectDoesNotExist)
         profile, created = Consultant_Profile.objects.get_or_create(user=user)
         slots = profile.availabilities.all().order_by('date')
         
@@ -309,7 +287,7 @@ def consultant_profile(request):
     # Logic for Clients
     elif user.role == 'CLIENT':
         if request.method == 'POST':
-            # Assuming you have a basic User form for Clients
+            # Basic User form for Clients
             form = UserUpdateForm(request.POST, instance=user)
             if form.is_valid():
                 form.save()
@@ -326,9 +304,9 @@ def consultant_profile(request):
 
 @login_required
 def payment_dash(request):
-    # Check if the user is a consultant
+    # Let check if the user is a consultant
     if request.user.role == 'CLIENT':
-        # Option A: Get ALL bookings in the system
+        # Let bet ALL bookings in the system
         all_payments = Payment.objects.all().order_by('-paid_at')
         all_bookings = Booking.objects.all().order_by('-created_at')
 
@@ -336,8 +314,6 @@ def payment_dash(request):
         all_payments = Payment.objects.all().order_by('-paid_at')
         all_bookings = Booking.objects.all().order_by('-created_at')
         
-        # Option B: Only get bookings assigned to THIS consultant (if field exists)
-        # all_bookings = Booking.objects.filter(consultant=request.user).order_by('-date')
     else:
         # Redirect or handle non-consultants
         all_payments, all_bookings = []

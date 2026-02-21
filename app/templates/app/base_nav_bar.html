@@ -31,11 +31,10 @@
             <a href="{% url 'book-dashboard' %}">Booking</a>
             {% endif %}
 
-                {% if user.is_consultant %}
-                {% if user.role == 'CONSULTANT' %}
-                    <a href="consultant-dash">Book Dashboard</a>
+               {% if user.is_consultant %}
+                    <a href="{% url 'consultant-dash' %}">Book Dashboard</a>
                 {% endif %}
-                {% endif %}
+              
 
                 {% endif %}
 
