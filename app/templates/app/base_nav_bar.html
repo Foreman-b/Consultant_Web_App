@@ -7,10 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Consult Booking{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> {% endcomment %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script> {% endcomment %}
     {% block extra_head %}{% endblock %}
 </head>
+
 <body>
     
     <nav class="navbar">
@@ -30,16 +31,21 @@
             <a href="{% url 'book-dashboard' %}">Booking</a>
             {% endif %}
 
-            {% if user.is_consultant %}
+                {% if user.is_consultant %}
+                {% if user.role == 'CONSULTANT' %}
                     <a href="consultant-dash">Book Dashboard</a>
                 {% endif %}
                 {% endif %}
+
+                {% endif %}
+
+
                 {% if user.is_authenticated %}
-                <li><a href="#">Payment</a></li>
+                <li><a href="{% url 'payment-dash' %}">Payment</a></li>
                     <li class="dropdown">
                         <a href="javascript:void(0)" class="dropbtn">Profile ▼</a>
                         <div class="dropdown-content">
-                            {% comment %} <a href="{% url 'profile' %}">My Profile</a> {% endcomment %}
+                            <a href="{% url 'profile' %}">My Profile</a>
                             <hr>
                             <!-- Re-enabled the Logout Form for security -->
                             <form action="{% url 'logout' %}" method="post" style="display:inline;">

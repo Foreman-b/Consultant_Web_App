@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Availability, Booking, User, Payment
+from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile
 from .forms import (
-    UserRegisterForm, ConsultantProfileForm,
+    UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm,
 )
 from django.contrib.auth import authenticate, login, logout
@@ -262,31 +262,84 @@ def verify_payment(request):
     return redirect("book-dashboard")
    
    
-   
-    # headers = {
-    #     "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
-    # }
+# @login_required
+# def consultant_profile(request):
+#     user = request.user
+#     slots = None
+#     form = None
+#      # Determine which profile type we are dealing with
+#     user_profile = request.user.profile 
+#     consultant_user = get_object_or_404(CustomUser, username=username, role='CONSULTANT')
+#     profile = consultant_user.profile
+#     slots = profile.availabilities.all().order_by('date')
 
-    # # Let call paystack verify endpoint
-    # response = request.get(
-    #     f"https://api.paystack.co/transaction/verify/{reference}",
+#     if request.method == 'POST':
+#         # request.FILES must be the second argument!
+#         form = ConsultantProfileForm(request.POST, request.FILES, instance=user_profile)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Your profile has been updated!')
+#             return redirect('consultant-profile')
+#     else:
+#         form = ConsultantProfileForm(instance=user_profile)
 
-    #     headers = headers,
-    # )
+#     return render(request, 'app/consultant_accounts.html', {'form': form})
 
-    # result = response.json()
+@login_required
+def consultant_profile(request):
+    user = request.user
+    slots = None
+    form = None
 
-    # if result["data"]["status"] == "success":
-    #     payment.status = Payment.PaymentStatus.SUCCESS
-    #     payment.paid_at = timezone.now()
-    #     payment.save()
+    # Logic for Consultants
+    if user.role == 'CONSULTANT':
+        # Get profile or create one if it doesn't exist (prevents RelatedObjectDoesNotExist)
+        profile, created = Consultant_Profile.objects.get_or_create(user=user)
+        slots = profile.availabilities.all().order_by('date')
+        
+        if request.method == 'POST':
+            form = ConsultantProfileForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Consultant profile updated!")
+                return redirect('profile')
+        else:
+            form = ConsultantProfileForm(instance=profile)
+        
+    # Logic for Clients
+    elif user.role == 'CLIENT':
+        if request.method == 'POST':
+            # Assuming you have a basic User form for Clients
+            form = UserUpdateForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Client settings updated!")
+                return redirect('profile')
+        else:
+            form = UserUpdateForm(instance=user)
 
-    #     booking = payment.booking
-    #     booking.status = Booking.StatusChoices.CONFIRMED
-    #     booking.save()
+    return render(request, 'app/accounts.html', {
+        'form': form,
+        'slots': slots,
+        'user': user
+    })
 
-    # else:
-    #     payment.status = Payment.PaymentStatus.FAILED
-    #     payment.save()
+@login_required
+def payment_dash(request):
+    # Check if the user is a consultant
+    if request.user.role == 'CLIENT':
+        # Option A: Get ALL bookings in the system
+        all_payments = Payment.objects.all().order_by('-paid_at')
+        all_bookings = Booking.objects.all().order_by('-created_at')
 
-    # return redirect("book-dashboard")
+    elif request.user.role == 'CONSULTANT':
+        all_payments = Payment.objects.all().order_by('-paid_at')
+        all_bookings = Booking.objects.all().order_by('-created_at')
+        
+        # Option B: Only get bookings assigned to THIS consultant (if field exists)
+        # all_bookings = Booking.objects.filter(consultant=request.user).order_by('-date')
+    else:
+        # Redirect or handle non-consultants
+        all_payments, all_bookings = []
+
+    return render(request, 'app/payment_dash.html', {'all_payments': all_payments, 'all_bookings': all_bookings})

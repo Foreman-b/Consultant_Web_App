@@ -1,13 +1,14 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Consultant_Profile, Availability, Booking, Payment, Review
+from .models import CustomUser, Consultant_Profile, Availability, Booking, Payment, Review
 from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory
 
 class UserRegisterForm(UserCreationForm):
     
     class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number',)
+        model = CustomUser
+        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'profile_picture')
 
     def clean_email(self):
         """
@@ -15,7 +16,7 @@ class UserRegisterForm(UserCreationForm):
         """
         email = self.cleaned_data.get('email')
         # Check if any user already has this email
-        if User.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("A user with that email already exists.")
         return email
     
@@ -23,7 +24,7 @@ class ConsultantProfileForm(forms.ModelForm):
 
     class Meta:
         model = Consultant_Profile
-        fields = ('specialization', 'bio', 'is_active',)
+        fields = ('specialization', 'bio', 'is_active')
 
 class AvailabilityForm(forms.ModelForm):
 
@@ -33,6 +34,14 @@ class AvailabilityForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+# This creates a group of forms for the Availability model
+AvailabilityFormSet = forms.inlineformset_factory(
+    Consultant_Profile, 
+    Availability, 
+    form=AvailabilityForm, 
+    extra=1,      # How many empty slots to show by default
+    can_delete=True # Allows consultants to remove a date
+)
 
 class BookingForm(forms.ModelForm):
 
@@ -54,3 +63,14 @@ class ReviewForm(forms.ModelForm):
         widgets = {
             'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
         }
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture',]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})

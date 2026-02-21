@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -16,4 +18,13 @@ urlpatterns = [
     # Now let add payment urls
     path('pay/<int:booking_id>/', views.initialize_payment, name='initialize-payment'),
     path('verify-payment/', views.verify_payment, name='verify-payment'),
-]
+    path('payment-dash/', views.payment_dash, name='payment-dash'),
+
+
+    # Let path for client profile
+    path('profile/', views.consultant_profile, name='profile'),
+
+] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

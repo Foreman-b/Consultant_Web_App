@@ -137,6 +137,7 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
+    background-color: #1a1a1a;
 }
 
 
@@ -199,6 +200,7 @@ body {
 .hero-btns {
     display: flex;
     gap: 20px;
+    text-align: center;
 }
 
 /* Buttons */
@@ -262,3 +264,34 @@ body {
 
 
 
+/* Update your styles.css */
+body {
+    background-color: #000000; /* Deep Black */
+    color: #ffffff;            /* White text for contrast */
+    margin: 0;
+    padding: 0;
+}
+
+/*
+.hero-section {
+    background-color: #000000;
+    color: white;
+    padding: 80px 20px;
+}
+
+.services-grid {
+    background-color: #111111; /* Slightly lighter black for depth 
+    padding: 60px 20px;
+}
+
+.service-card {
+    background-color: #1a1a1a; /* Dark gray cards
+    border: 1px solid #333;    /* Subtle border 
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.accent {
+    color: #0d6efd; /* Keep your accent color bright so it pops against black
+}
