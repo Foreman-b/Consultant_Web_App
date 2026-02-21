@@ -15,6 +15,10 @@ class AvailabilityViewSet(ModelViewSet):
     def get_queryset(self):
         return Availability.objects.filter(consultant__user=self.request.user)
 
+    def perform_create(self, serializer):
+    # Pass the profile instance, not the user instance
+        serializer.save(consultant=self.request.user.profile)
+
 class BookingViewSet(ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer

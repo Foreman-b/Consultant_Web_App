@@ -12,5 +12,5 @@ class BookingSerializer(serializers.ModelSerializer):
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
-        fields = ["id", "max_slot", "date", ]
+        fields = ["id", "consultant", "max_slot", "date", ]
         read_only_fields = ("consultant", "created_at",)
