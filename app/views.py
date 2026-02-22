@@ -55,9 +55,17 @@ def logout_view(request):
 def book_dashboard(request):
     user_bookings = Booking.objects.filter(client=request.user)
     
-    # REMOVE .filter(is_booked=False) since the field doesn't exist
-    availability_list = Availability.objects.all() 
+    # Let get availability slot based on recent one by the consultant
+    all_slots = Availability.objects.filter(date__gte=timezone.now().date()).order_by('date')
 
+    # Let make dictionary trick that ensures only one slot per consultant is show
+    unique_slots = {}
+    for slot in all_slots:
+        if slot.consultant_id not in unique_slots:
+            unique_slots[slot.consultant_id] = slot
+            
+    availability_list = unique_slots.values()
+    
     context = {
         'user_bookings': user_bookings,
         'availability_list': availability_list,
