@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'rest_framework',
+    'drf_spectacular',
+
 ]
 
 MIDDLEWARE = [
@@ -72,6 +74,19 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         # 'ENGINE': 'django.db.backends.sqlite3',
+#         # 'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('RD_NAME'),
+#         'USER': os.getenv('RD_USERNAME'),
+#         'PASSWORD': os.getenv('RD_PASSWORD'),
+#         'HOST': os.getenv('RD_HOST'),
+#         'PORT': os.getenv('RD_PORT'),
+        
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -133,3 +148,24 @@ LOGOUT_REDIRECT_URL = 'login'
 # PAYSTACK PAYMENT SETTINGS
 PAYSTACK_PUBLIC_KEY = os.getenv('PK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = os.getenv('PK_SECRET_KEY')
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Standard value is 1 year (31536000 seconds)
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
