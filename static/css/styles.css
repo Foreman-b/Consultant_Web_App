@@ -7,7 +7,7 @@
 
 .nav-container {
     display: flex;
-    justify-content: flex start;
+    justify-content: flex ;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
@@ -66,6 +66,7 @@
     background-color: #333;
     color: white;
 }
+
 
 /* Show dropdown on hover */
 .dropdown:hover .dropdown-content {

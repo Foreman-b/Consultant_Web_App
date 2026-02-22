@@ -36,16 +36,8 @@ class Consultant_Profile(models.Model):
     bio = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    profile_picture = models.ImageField(upload_to="upload/profile_picture", null=True, blank=True)
 
-    # def __str__(self):
-    #     return f"{self.user.username} - {self.specialization}"
-    # def __str__(self):
-    #     if self.user:
-    #         return f"{self.user.username} - {self.specialization}"
-    #     return f"No User Assigned - {self.specialization}"
     def __str__(self):
-        # Always check if self.user exists to avoid the AttributeError
         if self.user:
             return f"{self.user.username} ({self.specialization})"
         return f"Profile ID {self.id} (No User Linked)"
@@ -157,9 +149,20 @@ class Payment(models.Model):
         return f"Payment: {self.amount} - {self.status} (Ref {self.payment_reference})"
 
 
+# class Review(models.Model):
+#     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='reviews')
+#     rating = models.PositiveIntegerField()
+#     comment = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
 class Review(models.Model):
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='reviews')
-    rating = models.PositiveIntegerField()
+    # Link to the specific booking
+    booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='review')
+    # Link to the person writing it
+    client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    # Link to the consultant (derived from booking)
+    consultant = models.ForeignKey('Consultant_Profile', on_delete=models.CASCADE, null=True, blank=True)
+    
+    rating = models.PositiveSmallIntegerField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -48,7 +48,7 @@ class PaymentAdmin(admin.ModelAdmin):
 # Review is actually optional
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('booking', 'rating', 'created_at')
+    list_display = ('booking', 'client', 'rating', 'comment', 'created_at')
     readonly_fields = ('created_at',)
 
 

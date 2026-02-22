@@ -28,18 +28,10 @@
                         <div class="row mb-4 align-items-center">
                             <div class="col-md-4 text-center">
                               
-                                {% if request.user.role == 'CONSULTANT' and request.user.profile.profile_picture %}
-                                        <img src="{{ request.user.profile.profile_picture.url }}" class="rounded-circle img-thumbnail profile-img-preview">
-
-                                    {% elif request.user.role == 'CLIENT' and request.user.profile_picture %}
+                                {% if request.user.profile_picture %}
                                         <img src="{{ request.user.profile_picture.url }}" class="rounded-circle img-thumbnail profile-img-preview">
-
-                                    {% elif request.user.role == 'CLIENT' and request.user.profile.profile_picture %}
-                                        <img src="{{ request.user.profile.profile_picture.url }}" class="rounded-circle img-thumbnail profile-img-preview">
-
-                                    {% else %}
                                         <i class="bi bi-person-fill display-1 text-secondary"></i>
-                                    {% endif %}
+                                {% endif %}
 
                                     
                                
@@ -52,6 +44,7 @@
                         </div>
 
                         <hr class="my-4">
+            
 
                         
     
@@ -75,28 +68,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0">Available Booking Dates</h5>
-        </div>
-        <ul class="list-group list-group-flush">
-            {% for slot in slots %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span>
-                        <strong>{{ slot.date|date:"l, F j" }}</strong>
-                        <small class="text-muted d-block">Max Capacity: {{ slot.max_slot }}</small>
-                    </span>
-
-                    {% if slot.is_full %}
-                        <span class="badge bg-danger">Fully Booked</span>
-                    {% else %}
-                        <a href="#" class="btn btn-sm btn-outline-success">Set Now</a>
-                    {% endif %}
-                </li>
-            {% empty %}
-                <li class="list-group-item text-muted text-center">No availability listed for this consultant.</li>
-            {% endfor %}
-        </ul>
-    </div>
+           
         {% endif %}
         <div class="card mt-4">
         

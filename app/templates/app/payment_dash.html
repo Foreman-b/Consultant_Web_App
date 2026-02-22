@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_head %}
+    <title>{% block title %} Payments {% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 {% endblock %}
@@ -24,7 +25,6 @@
                     <th>Amount</th>
                     <th>Date Created</th>
                     <th>Status</th>
-                    
                 </tr>
             </thead>
             <tbody>
@@ -33,9 +33,9 @@
                     <td class="fw-bold">{{ booking.client.username }}</td>
                     <td>{{ booking.reason_for_session }}</td>
                     
-                    {% for payment in all_payments %}
-                    <td>  
-                        {{ payment.amount }} </td>{% endfor %}
+                    
+                    <td>  {% for payment in all_payments %}
+                        {{ payment.amount }} {% endfor %}</td>
                     
                     <!-- Using |date filter for a cleaner look -->
                     <td>{{ booking.created_at|date:"M d, Y H:i" }}</td>
@@ -46,7 +46,7 @@
                 
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center py-4 text-muted">
+                    <td colspan="5" class="text-center py-4 text-muted">
                         No payment found.
                     </td>
                 </tr>

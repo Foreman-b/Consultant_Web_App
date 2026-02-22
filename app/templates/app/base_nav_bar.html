@@ -8,7 +8,7 @@
     <title>{% block title %}Consult Booking{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script> {% endcomment %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -23,16 +23,21 @@
             {% if not user.is_authenticated %}
             <!-- 1. GUEST STATE -->
             <a href="{% url 'book-dashboard' %}">Booking</a>
+            
             {% endif %}
 
             {% if user.is_authenticated %}
             {% if user.role == 'CLIENT' %}
             <!-- 2. CLIENT STATE -->
             <a href="{% url 'book-dashboard' %}">Booking</a>
+            {% for booking in user_bookings %}
+            <a href="{% url 'session-review' booking.id %}"> Session Review </a>
+            {% endfor %}
             {% endif %}
 
                {% if user.is_consultant %}
                     <a href="{% url 'consultant-dash' %}">Book Dashboard</a>
+                    <a href="{% url 'availability-slot' %}">Availability</a>
                 {% endif %}
               
 
@@ -45,6 +50,7 @@
                         <a href="javascript:void(0)" class="dropbtn">Profile ▼</a>
                         <div class="dropdown-content">
                             <a href="{% url 'profile' %}">My Profile</a>
+                            
                             <hr>
                             <!-- Re-enabled the Logout Form for security -->
                             <form action="{% url 'logout' %}" method="post" style="display:inline;">

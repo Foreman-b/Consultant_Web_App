@@ -8,7 +8,7 @@ class UserRegisterForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'profile_picture')
+        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number')
 
     def clean_email(self):
         """
@@ -55,20 +55,40 @@ class PaymentForm(forms.ModelForm):
         model = Payment
         fields = ('amount',)
 
-class ReviewForm(forms.ModelForm):
+# class ReviewForm(forms.ModelForm):
 
+#     class Meta:
+#         model = Review
+#         fields = ('rating', 'comment')
+#         widgets = {
+#             'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
+#         }
+
+
+class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ('rating', 'comment',)
+        fields = ('rating', 'comment')
         widgets = {
-            'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
+            'rating': forms.NumberInput(attrs={
+                'min': 1, 
+                'max': 5,
+                'class': 'form-control bg-dark text-white border-secondary',
+                'placeholder': 'Rate 1 to 5'
+            }),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-control bg-dark text-white border-secondary',
+                'rows': 4,
+                'placeholder': 'Tell us about your session...'
+            }),
         }
+
 
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture',]
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

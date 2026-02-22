@@ -1,103 +1,72 @@
-# Consultant Booking Web Application
+## Consultant Booking Web Application
+Full-Stack Production Documentation
 
-A role-based Django web application that allows clients to book sessions with a consultant.  
-The platform supports authentication, structured booking management, and role-controlled dashboards for both clients and consultants.
+A robust, role-based Django platform enabling clients to discover consultants, book availability-based sessions, and provide feedback through a structured review system.
 
----
 
-## Project Overview
+# 1. Project Overview
+A professional marketplace platform designed to bridge the gap between expert consultants and clients. The application manages the entire lifecycle of a professional engagement: from availability scheduling and secure Paystack payments to virtual meeting hosting and peer reviews.
 
-This system is designed as a single-consultant booking platform where:
+# 2. System Architecture
+Technical Stack
+Framework: Django 5.x (Python 3.13)
 
-- Users register as **clients** by default  
-- Admin assigns **consultant** role  
-- Clients can book sessions with a reason for consultation  
-- Consultant reviews bookings, confirms status, and provides a meeting link  
-- Both users access dedicated dashboards  
+Database: PostgreSQL (Production grade, relational storage)
 
-The application follows Django’s MVT architecture and enforces clean role-based access control.
+Frontend: Bootstrap 5 with custom "Dark Mode" CSS
 
----
+Static Management: WhiteNoise (for serving files in production)
 
-## Architecture
+Payment Gateway: Paystack API (Secure NGN/USD transactions)
 
-### Backend Stack
-- Python 3.13  
-- Django  
-- SQLite (development)  
-- Django Authentication System  
-- Custom User Model (extends `AbstractUser`)  
+WSGI Server: Gunicorn
 
-### Design Pattern
-- MVT (Model–View–Template)  
-- Role-Based Access Control (RBAC)  
-- Server-side validation  
-- Secure foreign key handling  
+# 3. Core Database Models (The "Big Six")
+The system logic is built around six primary pillars:
 
----
+# 4. Key Workflows
+A. Availability & Booking
+Consultants use Inline Formsets to manage multiple dates simultaneously. Clients browse these slots and select a time. The system prevents overbooking by tracking max_slots per availability instance.
 
-## User Roles
+B. Payment Integration (Paystack)
+The booking remains "Pending" until a successful Paystack transaction is recorded.
 
-### Client
-- Register and authenticate  
-- Access booking dashboard  
-- Book a session  
-- Provide reason for booking  
-- Track booking status  
+Initialize: Generate a unique reference and redirect to Paystack.
 
-### Consultant
-- Access consultant dashboard  
-- View who booked sessions  
-- See reason for booking  
-- Confirm or update booking status  
-- Provide meeting link after confirmation  
+Verify: View-side logic confirms payment with Paystack's servers.
 
-Role escalation is strictly controlled by the admin.
+Confirm: Upon verification, the booking is activated, and the consultant is notified.
 
----
+C. Post-Session Feedback
+Reviews are locked behind a "Completion" gate. A client can only submit a ReviewForm (Rating 1-5 and Comments) if the Booking.status is marked as COMPLETED. This ensures all reviews are from verified, paying customers.
 
-## Database Models
+# 5. Security & Access Control
+Role-Based Access (RBAC): Custom properties is_consultant and is_client protect views.
 
-- **User** (Custom model with role system)  
-- **Booking**  
-- (Optional) ConsultantProfile  
+Lazy Referencing: Models use string references (e.g., 'Booking') to prevent circular import crashes during startup.
 
-### Key Relationships
-- Booking → linked to Client (User)  
-- Booking → contains reason for session  
-- Booking → contains status (Pending / Confirmed / Cancelled)  
-- Booking → stores meeting link (added by consultant)  
+Identity Protection: Identity fields (client, consultant) are handled via commit=False in the backend to prevent users from manipulating POST data.
 
----
+Environment Safety: All keys (Paystack Secret, Database URL) are stored in environment variables, never hardcoded.
 
-## Features Implemented
+# 6. Deployment & Environment Config
+Required Environment Variables
+To deploy on Render or Coolify, you must set these variables in the dashboard:
 
-- Environment configuration  
-- Custom user authentication system  
-- Booking form with validation  
-- Client booking dashboard  
-- Consultant booking management dashboard  
-- Status confirmation workflow  
-- Meeting link assignment system  
+Production Setup
+Media Files: Profile pictures are stored in MEDIA_ROOT.
 
----
+Static Files: WhiteNoise handles CSS/JS delivery without the need for a separate Nginx server.
 
-## Security Design
+Database Migration: The transition from SQLite to PostgreSQL is handled via python manage.py migrate during the build step.
 
-- Default role: CLIENT  
-- Role field not exposed during registration  
-- Foreign keys assigned server-side  
-- Login required for protected routes  
-- CSRF protection enabled  
-- Secure authentication flow  
+# 7. Development Status
+✔ Authentication: Custom User, Roles, and Profile Pictures.
 
----
+✔ Consultant Tools: Availability Management.
 
-## Development Status
+✔ Client Tools: Booking Dashboard and Session Selection.
 
-✔ Environment setup completed  
-✔ Models implemented  
-✔ Forms implemented  
-✔ Authentication system completed  
-✔ Client booking workflow completed  
-✔ Consultant dashboard completed  
+✔ Financials: Paystack Payment Verification.
+
+✔ Social: Verified Review and Rating System.

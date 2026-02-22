@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path('', views.home,  name='home'),
     path('register/', views.register, name='register'),
@@ -22,9 +23,17 @@ urlpatterns = [
 
 
     # Let path for client profile
-    path('profile/', views.consultant_profile, name='profile'),
+    path('profile/', views.user_profile, name='profile'),
+    path('availability-slot/', views.availability_slot, name='availability-slot'),
+
+    # Let create session review right here
+    path('review-session/<int:booking_id>/', views.session_review, name='session-review'),
+
+
+    
 
 ] 
 
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

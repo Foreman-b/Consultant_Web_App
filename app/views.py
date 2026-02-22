@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile
+from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile, Review
 from .forms import (
     UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
-    AvailabilityForm, BookingForm, PaymentForm, ReviewForm,
+    AvailabilityForm, BookingForm, PaymentForm, ReviewForm, AvailabilityFormSet
 )
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -55,9 +55,17 @@ def logout_view(request):
 def book_dashboard(request):
     user_bookings = Booking.objects.filter(client=request.user)
     
-    # REMOVE .filter(is_booked=False) since the field doesn't exist
-    availability_list = Availability.objects.all() 
+    # Let get availability slot based on recent one by the consultant
+    all_slots = Availability.objects.filter(date__gte=timezone.now().date()).order_by('date')
 
+    # Let make dictionary trick that ensures only one slot per consultant is show
+    unique_slots = {}
+    for slot in all_slots:
+        if slot.consultant_id not in unique_slots:
+            unique_slots[slot.consultant_id] = slot
+            
+    availability_list = unique_slots.values()
+    
     context = {
         'user_bookings': user_bookings,
         'availability_list': availability_list,
@@ -111,10 +119,6 @@ from django.views.decorators.http import require_POST
 def update_booking_status(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     
-    # Optional: Security check to ensure only the consultant can change status
-    # if booking.consultant.user != request.user:
-    #     return HttpResponseForbidden()
-
     new_status = request.POST.get('status')
     
     # Check if the submitted status is valid based on your model choices
@@ -264,7 +268,7 @@ def verify_payment(request):
 
 
 @login_required
-def consultant_profile(request):
+def user_profile(request):
     user = request.user
     slots = None
     form = None
@@ -319,3 +323,68 @@ def payment_dash(request):
         all_payments, all_bookings = []
 
     return render(request, 'app/payment_dash.html', {'all_payments': all_payments, 'all_bookings': all_bookings})
+
+@login_required
+def availability_slot(request):
+    user = request.user
+    
+    # Safety check: Only consultants should be here
+    if user.role != 'CONSULTANT':
+        messages.error(request, "Access denied. Only consultants can manage slots.")
+        return redirect('home')
+
+    # Let Get the Consultant Profile (Create if missing)
+    profile, created = Consultant_Profile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        # Let use the Form to handle multiple date inputs
+        formset = AvailabilityFormSet(request.POST, instance=profile)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Availability slots updated!")
+            return redirect('availability-slot')
+    else:
+        # 3. Display existing slots + 1 extra empty row
+        formset = AvailabilityFormSet(instance=profile)
+
+    return render(request, 'app/availability_slot.html', {
+        'formset': formset,
+        'profile': profile
+    })
+
+
+
+@login_required
+def session_review(request, booking_id):
+    # 1. Fetch the actual booking/session being reviewed
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if hasattr(booking, 'review'): 
+        messages.info(request, "You have already reviewed this session.")
+        return redirect('book-dashboard')
+    
+    # 2. Prevent people who didn't book the session from reviewing it
+    if booking.client != request.user:
+        messages.error(request, "You can only review sessions you participated in.")
+        return redirect('book-dashboard')
+
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.client = request.user
+            review.booking = booking  # Link review to the session/booking
+            
+            # If your Review model has a consultant field, set it from the booking
+            review.consultant = booking.availability.consultant 
+            
+            review.save()
+            messages.success(request, "Thank you for your review!")
+            return redirect("book-dashboard")
+    else:
+        form = ReviewForm()
+
+    return render(request, "app/session_review.html", {
+        "form": form, 
+        "booking": booking
+    })
