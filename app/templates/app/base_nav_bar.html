@@ -23,12 +23,16 @@
             {% if not user.is_authenticated %}
             <!-- 1. GUEST STATE -->
             <a href="{% url 'book-dashboard' %}">Booking</a>
+            
             {% endif %}
 
             {% if user.is_authenticated %}
             {% if user.role == 'CLIENT' %}
             <!-- 2. CLIENT STATE -->
             <a href="{% url 'book-dashboard' %}">Booking</a>
+            {% for booking in user_bookings %}
+            <a href="{% url 'session-review' booking.id %}"> Session Review </a>
+            {% endfor %}
             {% endif %}
 
                {% if user.is_consultant %}
@@ -46,6 +50,7 @@
                         <a href="javascript:void(0)" class="dropbtn">Profile ▼</a>
                         <div class="dropdown-content">
                             <a href="{% url 'profile' %}">My Profile</a>
+                            
                             <hr>
                             <!-- Re-enabled the Logout Form for security -->
                             <form action="{% url 'logout' %}" method="post" style="display:inline;">

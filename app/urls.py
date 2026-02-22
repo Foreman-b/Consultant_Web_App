@@ -25,6 +25,9 @@ urlpatterns = [
     path('profile/', views.user_profile, name='profile'),
     path('availability-slot/', views.availability_slot, name='availability-slot'),
 
+    # Let create session review right here
+    path('review-session/<int:booking_id>/', views.session_review, name='session-review'),
+
 ] 
 
 if settings.DEBUG:

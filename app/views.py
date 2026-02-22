@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile
+from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile, Review
 from .forms import (
     UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm, AvailabilityFormSet
@@ -119,10 +119,6 @@ from django.views.decorators.http import require_POST
 def update_booking_status(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     
-    # Optional: Security check to ensure only the consultant can change status
-    # if booking.consultant.user != request.user:
-    #     return HttpResponseForbidden()
-
     new_status = request.POST.get('status')
     
     # Check if the submitted status is valid based on your model choices
@@ -354,4 +350,41 @@ def availability_slot(request):
     return render(request, 'app/availability_slot.html', {
         'formset': formset,
         'profile': profile
+    })
+
+
+
+@login_required
+def session_review(request, booking_id):
+    # 1. Fetch the actual booking/session being reviewed
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if hasattr(booking, 'review'): 
+        messages.info(request, "You have already reviewed this session.")
+        return redirect('book-dashboard')
+    
+    # 2. Prevent people who didn't book the session from reviewing it
+    if booking.client != request.user:
+        messages.error(request, "You can only review sessions you participated in.")
+        return redirect('book-dashboard')
+
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.client = request.user
+            review.booking = booking  # Link review to the session/booking
+            
+            # If your Review model has a consultant field, set it from the booking
+            review.consultant = booking.availability.consultant 
+            
+            review.save()
+            messages.success(request, "Thank you for your review!")
+            return redirect("book-dashboard")
+    else:
+        form = ReviewForm()
+
+    return render(request, "app/session_review.html", {
+        "form": form, 
+        "booking": booking
     })
