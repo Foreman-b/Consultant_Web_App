@@ -8,7 +8,7 @@ class UserRegisterForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'profile_picture')
+        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number')
 
     def clean_email(self):
         """
@@ -68,7 +68,7 @@ class ReviewForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture',]
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

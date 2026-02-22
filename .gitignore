@@ -22,4 +22,7 @@ migrations
 .vscode/
 .idea/
 
+**/static/
+static
+staticfiles
 

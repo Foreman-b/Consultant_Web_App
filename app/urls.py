@@ -22,7 +22,8 @@ urlpatterns = [
 
 
     # Let path for client profile
-    path('profile/', views.consultant_profile, name='profile'),
+    path('profile/', views.user_profile, name='profile'),
+    path('availability-slot/', views.availability_slot, name='availability-slot'),
 
 ] 
 

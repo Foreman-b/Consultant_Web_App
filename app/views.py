@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile
 from .forms import (
     UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
-    AvailabilityForm, BookingForm, PaymentForm, ReviewForm,
+    AvailabilityForm, BookingForm, PaymentForm, ReviewForm, AvailabilityFormSet
 )
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -272,7 +272,7 @@ def verify_payment(request):
 
 
 @login_required
-def consultant_profile(request):
+def user_profile(request):
     user = request.user
     slots = None
     form = None
@@ -327,3 +327,31 @@ def payment_dash(request):
         all_payments, all_bookings = []
 
     return render(request, 'app/payment_dash.html', {'all_payments': all_payments, 'all_bookings': all_bookings})
+
+@login_required
+def availability_slot(request):
+    user = request.user
+    
+    # Safety check: Only consultants should be here
+    if user.role != 'CONSULTANT':
+        messages.error(request, "Access denied. Only consultants can manage slots.")
+        return redirect('home')
+
+    # Let Get the Consultant Profile (Create if missing)
+    profile, created = Consultant_Profile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        # Let use the Form to handle multiple date inputs
+        formset = AvailabilityFormSet(request.POST, instance=profile)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Availability slots updated!")
+            return redirect('availability-slot')
+    else:
+        # 3. Display existing slots + 1 extra empty row
+        formset = AvailabilityFormSet(instance=profile)
+
+    return render(request, 'app/availability_slot.html', {
+        'formset': formset,
+        'profile': profile
+    })
