@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Availability, Booking, CustomUser, Payment, Consultant_Profile, Review
 from .forms import (
     UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
-    AvailabilityForm, BookingForm, PaymentForm, ReviewForm, AvailabilityFormSet
+    AvailabilityForm, BookingForm, PaymentForm, ReviewForm, 
+    AvailabilityFormSet, ProfilePictureForm
 )
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -392,3 +393,16 @@ def session_review(request, booking_id):
         "form": form, 
         "booking": booking
     })
+
+
+@login_required
+def upload_picture(request):
+    if request.method == 'POST':
+        # We pass request.FILES because images are not in request.POST
+        form = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfilePictureForm(instance=request.user)
+    return render(request, 'upload.html', {'form': form})
