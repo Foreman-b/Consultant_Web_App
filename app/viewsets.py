@@ -37,3 +37,4 @@ class BookingViewSet(ModelViewSet):
         # This line fixes the NOT NULL constraint error.
         # It tells Django: "Take the person logged in right now and set them as the client."
         serializer.save(client=self.request.user)
+

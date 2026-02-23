@@ -4,6 +4,8 @@ from .models import CustomUser, Consultant_Profile, Availability, Booking, Payme
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 
+
+
 class UserRegisterForm(UserCreationForm):
     
     class Meta:
@@ -34,6 +36,7 @@ class AvailabilityForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+
 # This creates a group of forms for the Availability model
 AvailabilityFormSet = forms.inlineformset_factory(
     Consultant_Profile, 
@@ -54,15 +57,6 @@ class PaymentForm(forms.ModelForm):
     class Meta:
         model = Payment
         fields = ('amount',)
-
-# class ReviewForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Review
-#         fields = ('rating', 'comment')
-#         widgets = {
-#             'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-#         }
 
 
 class ReviewForm(forms.ModelForm):
@@ -88,9 +82,18 @@ class ReviewForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture']
+        fields = ['first_name', 'last_name', 'email', 'phone_number']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+
+class ProfilePictureForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['profile_picture']
+        widgets = {
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'})
+        }
