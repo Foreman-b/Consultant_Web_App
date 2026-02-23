@@ -161,7 +161,7 @@ def initialize_payment(request, booking_id):
     amount = 500000     # this N5,000.00 in kobo
 
     # Let create re-usable payment
-    payment, create = Payment.objects.create(
+    payment, create = Payment.objects.get_or_create(
         booking =booking,
         defaults={"amount": amount}
     )
@@ -307,28 +307,48 @@ def user_profile(request):
         'user': user
     })
 
+# @login_required
+# def payment_dash(request):
+#     # Let check if the user is a consultant
+#     if request.user.role == 'CLIENT':
+#         # Filter: Only payments linked to bookings made by THIS client
+#         all_payments = Payment.objects.filter(booking__client=request.user).order_by('-paid_at')
+#         all_bookings = Booking.objects.filter(client=request.user).order_by('-created_at')
+
+#     elif request.user.role == 'CONSULTANT':
+#         # Filter: Only payments linked to bookings for THIS consultant
+#         all_payments = Payment.objects.filter(booking__availability__consultant__user=request.user).order_by('-paid_at')
+#         all_bookings = Booking.objects.filter(availability__consultant__user=request.user).order_by('-created_at')
+        
+#     else:
+#         # Redirect or handle non-consultants
+#         all_payments = []
+#         all_bookings = []
+
+#     return render(request, 'app/payment_dash.html', {
+#         'all_payments': all_payments, 
+#         'all_bookings': all_bookings
+#     })
+
 @login_required
 def payment_dash(request):
-    # Let check if the user is a consultant
     if request.user.role == 'CLIENT':
-        # Filter: Only payments linked to bookings made by THIS client
-        all_payments = Payment.objects.filter(booking__client=request.user).order_by('-paid_at')
-        all_bookings = Booking.objects.filter(client=request.user).order_by('-created_at')
+        # Get payments for bookings made by this client
+        payments = Payment.objects.filter(
+            booking__client=request.user
+        ).select_related('booking', 'booking__client').order_by('-paid_at')
 
     elif request.user.role == 'CONSULTANT':
-        # Filter: Only payments linked to bookings for THIS consultant
-        all_payments = Payment.objects.filter(booking__availability__consultant__user=request.user).order_by('-paid_at')
-        all_bookings = Booking.objects.filter(availability__consultant__user=request.user).order_by('-created_at')
-        
+        # Get payments for bookings assigned to this consultant
+        payments = Payment.objects.filter(
+            booking__availability__consultant__user=request.user
+        ).select_related('booking', 'booking__client').order_by('-paid_at')
     else:
-        # Redirect or handle non-consultants
-        all_payments = []
-        all_bookings = []
+        payments = []
 
-    return render(request, 'app/payment_dash.html', {
-        'all_payments': all_payments, 
-        'all_bookings': all_bookings
-    })
+    return render(request, 'app/payment_dash.html', {'payments': payments})
+
+
 
 @login_required
 def availability_slot(request):

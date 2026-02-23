@@ -147,7 +147,10 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment: {self.amount} - {self.status} (Ref {self.payment_reference})"
-
+    
+    @property
+    def amount_in_naira(self):
+        return self.amount / 100
 
 # class Review(models.Model):
 #     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='reviews')
