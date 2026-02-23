@@ -317,12 +317,13 @@ def payment_dash(request):
 
     elif request.user.role == 'CONSULTANT':
         # Filter: Only payments linked to bookings for THIS consultant
-        all_payments = Payment.objects.filter(booking__availability__consultant=request.user).order_by('-paid_at')
-        all_bookings = Booking.objects.filter(availability__consultant=request.user).order_by('-created_at')
+        all_payments = Payment.objects.filter(booking__availability__consultant__user=request.user).order_by('-paid_at')
+        all_bookings = Booking.objects.filter(availability__consultant__user=request.user).order_by('-created_at')
         
     else:
         # Redirect or handle non-consultants
-        all_payments, all_bookings = []
+        all_payments = []
+        all_bookings = []
 
     return render(request, 'app/payment_dash.html', {
         'all_payments': all_payments, 
