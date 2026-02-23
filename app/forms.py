@@ -90,10 +90,11 @@ class UserUpdateForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
 
-class ProfilePictureForm(forms.ModelForm):
+
+class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['profile_picture']
         widgets = {
-            'profile_picture': forms.FileInput(attrs={'class': 'form-control'})
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }

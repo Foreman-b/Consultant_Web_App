@@ -3,7 +3,7 @@ from .models import Availability, Booking, CustomUser, Payment, Consultant_Profi
 from .forms import (
     UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm, 
-    AvailabilityFormSet, ProfilePictureForm
+    AvailabilityFormSet, ProfileUpdateForm
 )
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -161,7 +161,7 @@ def initialize_payment(request, booking_id):
     amount = 500000     # this N5,000.00 in kobo
 
     # Let create re-usable payment
-    payment, create = Payment.objects.get_or_create(
+    payment, create = Payment.objects.create(
         booking =booking,
         defaults={"amount": amount}
     )
@@ -397,14 +397,19 @@ def session_review(request, booking_id):
 
 
 @login_required
-def upload_picture(request):
-    user = request.user
+def update_profile(request):
     if request.method == 'POST':
-        # We pass request.FILES because images are not in request.POST
-        formp = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
-        if formp.is_valid():
-            formp.save()
-            return redirect('profile')
+        # request.FILES is the most important part!
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            
+            # Redirect back to the correct dashboard based on role
+            if request.user.role == 'CONSULTANT':
+                return redirect('profile')
+            else:
+                return redirect('profile')
     else:
-        formp = ProfilePictureForm(instance=request.user)
-    return render(request, 'app/accounts.html', {'form': formp})
+        form = ProfileUpdateForm(instance=request.user)
+    
+    return render(request, 'app/update_profile.html', {'form': form})
