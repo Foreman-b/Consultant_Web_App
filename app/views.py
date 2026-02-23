@@ -310,19 +310,23 @@ def user_profile(request):
 def payment_dash(request):
     # Let check if the user is a consultant
     if request.user.role == 'CLIENT':
-        # Let bet ALL bookings in the system
-        all_payments = Payment.objects.all().order_by('-paid_at')
-        all_bookings = Booking.objects.all().order_by('-created_at')
+        # Filter: Only payments linked to bookings made by THIS client
+        all_payments = Payment.objects.filter(booking__client=request.user).order_by('-date_created')
+        all_bookings = Booking.objects.filter(client=request.user).order_by('-created_at')
 
     elif request.user.role == 'CONSULTANT':
-        all_payments = Payment.objects.all().order_by('-paid_at')
-        all_bookings = Booking.objects.all().order_by('-created_at')
+        # Filter: Only payments linked to bookings for THIS consultant
+        all_payments = Payment.objects.filter(booking__availability__consultant=request.user).order_by('-date_created')
+        all_bookings = Booking.objects.filter(availability__consultant=request.user).order_by('-created_at')
         
     else:
         # Redirect or handle non-consultants
         all_payments, all_bookings = []
 
-    return render(request, 'app/payment_dash.html', {'all_payments': all_payments, 'all_bookings': all_bookings})
+    return render(request, 'app/payment_dash.html', {
+        'all_payments': all_payments, 
+        'all_bookings': all_bookings
+    })
 
 @login_required
 def availability_slot(request):
