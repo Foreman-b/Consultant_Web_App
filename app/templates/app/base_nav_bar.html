@@ -29,10 +29,7 @@
             {% if user.is_authenticated %}
             {% if user.role == 'CLIENT' %}
             <!-- 2. CLIENT STATE -->
-            <a href="{% url 'book-dashboard' %}">Booking</a>
-            {% for booking in user_bookings %}
-            <a href="{% url 'session-review' booking.id %}"> Session Review </a>
-            {% endfor %}
+            <a href="{% url 'book-dashboard' %}">Booking</a>            
             {% endif %}
 
                {% if user.is_consultant %}

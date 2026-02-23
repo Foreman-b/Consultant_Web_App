@@ -38,7 +38,7 @@
                         
                         
 
-                        <div class="mt-auto">
+                        {% comment %} <div class="mt-auto">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge {% if booking.status == 'pending' %}bg-warning text-dark{% else %}bg-success{% endif %}">
                                     {{ booking.status|title }}
@@ -55,6 +55,30 @@
                                     {% endif %}
                                 </div>
                                 
+                            </div>
+                        </div> {% endcomment %}
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge {% if booking.status == 'pending' %}bg-warning text-dark{% elif booking.status == 'completed' %}bg-info{% else %}bg-success{% endif %}">
+                                    {{ booking.status|title }}
+                                </span>
+                                <br><br>
+
+                                <div class="btn-group-container">
+                                    {% if booking.status == 'pending' %}
+                                        <a href="{% url 'initialize-payment' booking.id %}" class="btn btn-pay-now">Pay Now</a>
+                                    {% endif %}
+                                    
+                                    {% if booking.meeting_link and booking.status == 'confirmed' %}
+                                        <a href="{{ booking.meeting_link }}" target="_blank" class="btn btn-primary btn-sm ms-2">Join</a>
+                                    {% endif %}
+
+                                    {% if booking.status == 'completed' %}
+                                        <a href="{% url 'session-review' booking.id %}" class="btn btn-outline-primary btn-sm ms-2">
+                                            <i class="bi bi-star"></i> Review Session
+                                        </a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                         <br><br>

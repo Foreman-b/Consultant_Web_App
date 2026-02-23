@@ -398,6 +398,7 @@ def session_review(request, booking_id):
 
 @login_required
 def upload_picture(request):
+    user = request.user
     if request.method == 'POST':
         # We pass request.FILES because images are not in request.POST
         formp = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
@@ -405,5 +406,5 @@ def upload_picture(request):
             formp.save()
             return redirect('profile')
     else:
-        form = ProfilePictureForm(instance=request.user)
+        formp = ProfilePictureForm(instance=request.user)
     return render(request, 'app/accounts.html', {'form': formp})
