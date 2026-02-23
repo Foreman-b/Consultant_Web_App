@@ -312,12 +312,12 @@ def payment_dash(request):
     # Let check if the user is a consultant
     if request.user.role == 'CLIENT':
         # Filter: Only payments linked to bookings made by THIS client
-        all_payments = Payment.objects.filter(booking__client=request.user).order_by('-date_created')
+        all_payments = Payment.objects.filter(booking__client=request.user).order_by('-paid_at')
         all_bookings = Booking.objects.filter(client=request.user).order_by('-created_at')
 
     elif request.user.role == 'CONSULTANT':
         # Filter: Only payments linked to bookings for THIS consultant
-        all_payments = Payment.objects.filter(booking__availability__consultant=request.user).order_by('-date_created')
+        all_payments = Payment.objects.filter(booking__availability__consultant=request.user).order_by('-paid_at')
         all_bookings = Booking.objects.filter(availability__consultant=request.user).order_by('-created_at')
         
     else:
