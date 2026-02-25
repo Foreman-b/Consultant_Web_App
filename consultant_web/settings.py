@@ -29,9 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
     'rest_framework',
     'drf_spectacular',
+    'app',
 
 ]
 
@@ -82,13 +82,6 @@ DATABASES = {
         'PASSWORD': os.environ["RDS_PASSWORD"],
         'HOST': os.environ["RDS_HOST"],
         'PORT': os.environ["RDS_PORT"],
-
-        # RENDER DB
-        # 'NAME': os.getenv('RD_NAME'),
-        # 'USER': os.getenv('RD_USERNAME'),
-        # 'PASSWORD': os.getenv('RD_PASSWORD'),
-        # 'HOST': os.getenv('RD_HOST'),
-        # 'PORT': os.getenv('RD_PORT'),
         
     }
 }
