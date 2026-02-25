@@ -5,14 +5,20 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+    integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+    crossorigin="anonymous"></script>
+
 <style>
-    /* Inline override to ensure background is black */
-    body, .hero-section, .services-grid {
+    body,
+    .hero-section,
+    .services-grid {
         background-color: #000000 !important;
         color: white !important;
     }
+
     .service-card {
         background-color: #121212 !important;
         border: 1px solid #222;
@@ -24,18 +30,19 @@
 <section class="hero-section">
     <div class="hero-content">
         <h1>Expert Guidance for Your <span class="accent">Next Big Step</span>.</h1> <br><br>
-        <p class="text-light">Book a private session with world-class consultants to scale your business, tech, or personal growth.</p>
-        <div class="hero-btns",>
+        <p class="text-light">Book a private session with world-class consultants to scale your business, tech, or
+            personal growth.</p>
+        <div class="hero-btns" ,>
             {% if user.is_authenticated %}
-             {% if user.role == 'CLIENT' %}
-                <a href="{% url 'book-dashboard' %}" class="btn-primary">Get Started</a>
+            {% if user.role == 'CLIENT' %}
+            <a href="{% url 'book-dashboard' %}" class="btn-primary">Get Started</a>
             {% elif user.is_consultant %}
             {% if user.role == 'CONSULTANT' %}
-                <a href="{% url 'consultant-dash' %}" class="btn-primary">Get Started</a>
-                {% endif %}
-                {% endif %}
+            <a href="{% url 'consultant-dash' %}" class="btn-primary">Get Started</a>
+            {% endif %}
+            {% endif %}
             {% else %}
-                <a href="{% url 'login' %}" class="btn-primary">Get Started</a>
+            <a href="{% url 'login' %}" class="btn-primary">Get Started</a>
             {% endif %}
             <a href="#services" class="btn-secondary">Learn More</a>
         </div>
@@ -47,7 +54,8 @@
 
 <section id="services" class="services-grid">
     <div class="service-card">
-        <i class="bi bi-calendar3"></i> <h3>Easy Scheduling</h3>
+        <i class="bi bi-calendar3"></i>
+        <h3>Easy Scheduling</h3>
         <p>Pick a date and time that works best for your busy schedule.</p>
     </div>
     <div class="service-card">

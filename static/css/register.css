@@ -13,12 +13,11 @@
     min-height: 100vh;
 }
 
-/* The Form Card */
+
 .register-card {
     background-color: #1e1e1e;
     width: 100%;
     max-width: 500px;
-    /* Slightly wider for the extra fields */
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
@@ -33,14 +32,14 @@
     letter-spacing: 1px;
 }
 
-/* Django's p tags inside the form */
+
 .form-container p {
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
 }
 
-/* Labels */
+
 .form-container label {
     color: #bbb;
     font-size: 0.9rem;
@@ -48,7 +47,7 @@
     font-weight: 500;
 }
 
-/* Input Fields */
+
 .form-container input {
     background-color: #2a2a2a;
     border: 1px solid #444;
@@ -66,7 +65,7 @@
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
 }
 
-/* Help Text (The password requirements) */
+
 .helptext {
     display: block;
     font-size: 0.75rem;
@@ -74,7 +73,7 @@
     line-height: 1.4;
 }
 
-/* Validation Errors */
+
 .errorlist {
     color: #ff5555;
     list-style: none;
@@ -84,12 +83,11 @@
     font-weight: bold;
 }
 
-/* The Register Button */
+
 .btn-register {
     width: 100%;
     padding: 14px;
     background-color: #ffffff;
-    /* High contrast white button */
     color: #121212;
     border: none;
     border-radius: 6px;
@@ -109,7 +107,7 @@
     transform: translateY(0);
 }
 
-/* Footer link (Register here) */
+
 .login-footer {
     text-align: center;
     margin-top: 20px;

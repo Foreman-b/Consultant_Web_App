@@ -8,7 +8,7 @@ import uuid
 class CustomUser(AbstractUser):
 
     class Role(models.TextChoices):
-        # For our user let define each role for both client and consultant
+        # Role for both client and consultant
         CLIENT = "CLIENT", "Client"
         CONSULTANT = "CONSULTANT", "consultant"
 
@@ -25,7 +25,7 @@ class CustomUser(AbstractUser):
     def is_client(self):
         return self.role == self.Role.CLIENT
 
-# Now let create deatisl for consultant profile
+
 class Consultant_Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
@@ -94,15 +94,10 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
    
-    # def __str__(self):
-    #     return f"Booking: {self.client.username} -> {self.consultant.username} ({self.availability.date})"
-    # app/models.py
 
     def __str__(self):
-        # Use .user.username instead of .username for the consultant
         client_name = self.client.username if self.client else "No Client"
         
-        # Hop through the 'user' relationship of the Consultant_Profile
         consultant_name = self.consultant.user.username if self.consultant and self.consultant.user else "No Consultant"
         
         date = self.availability.date if self.availability else "No Date"
@@ -111,8 +106,6 @@ class Booking(models.Model):
 
     @property
     def is_paid(self):
-        # This checks if a related payment exists AND is successful
-        # Using hasattr to avoid RelatedObjectDoesNotExist errors
         if hasattr(self, 'payment'): 
             return self.payment.status == 'SUCCESS'
         return False
@@ -152,11 +145,7 @@ class Payment(models.Model):
     def amount_in_naira(self):
         return self.amount / 100
 
-# class Review(models.Model):
-#     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='reviews')
-#     rating = models.PositiveIntegerField()
-#     comment = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
+
 class Review(models.Model):
     # Link to the specific booking
     booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='review')

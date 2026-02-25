@@ -1,111 +1,110 @@
-/* Center the login card on the screen */
-.login-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    background-color: #ffffff; /* Deep Black */
-}
+ .login-wrapper {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     min-height: 80vh;
+     background-color: #ffffff;
+ }
 
-/* The Login Box */
-.login-card {
-    background-color: #1e1e1e; /* Dark Grey */
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    width: 100%;
-    max-width: 380px;
-    border: 1px solid #333;
-}
 
-.login-card h2 {
-    color: #ffffff;
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
+ .login-card {
+     background-color: #1e1e1e;
+     padding: 40px;
+     border-radius: 12px;
+     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+     width: 100%;
+     max-width: 380px;
+     border: 1px solid #333;
+ }
 
-/* Style the Django-generated p, label, and input */
-.form-group p {
-    margin-bottom: 20px;
-}
+ .login-card h2 {
+     color: #ffffff;
+     text-align: center;
+     margin-bottom: 25px;
+     font-weight: 600;
+     letter-spacing: 0.5px;
+ }
 
-.form-group label {
-    display: block;
-    color: #999;
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
 
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    background-color: #2a2a2a;
-    border: 1px solid #444;
-    border-radius: 6px;
-    color: #ffffff;
-    font-size: 1rem;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-}
+ .form-group p {
+     margin-bottom: 20px;
+ }
 
-.form-group input:focus {
-    outline: none;
-    border-color: #ffffff; /* White border on focus */
-    background-color: #333;
-}
+ .form-group label {
+     display: block;
+     color: #999;
+     font-size: 0.85rem;
+     margin-bottom: 8px;
+     text-transform: uppercase;
+ }
 
-/* The Login Button */
-.btn-login {
-    width: 100%;
-    padding: 14px;
-    background-color: #ffffff; /* Bright White */
-    color: #121212; /* Black Text */
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
-    margin-top: 10px;
-}
+ .form-group input {
+     width: 100%;
+     padding: 12px;
+     background-color: #2a2a2a;
+     border: 1px solid #444;
+     border-radius: 6px;
+     color: #ffffff;
+     font-size: 1rem;
+     box-sizing: border-box;
+     transition: border-color 0.3s ease;
+ }
 
-.btn-login:hover {
-    background-color: #cccccc;
-    transform: translateY(-2px);
-}
+ .form-group input:focus {
+     outline: none;
+     border-color: #ffffff;
+     background-color: #333;
+ }
 
-/* Footer link (Register here) */
-.login-footer {
-    text-align: center;
-    margin-top: 20px;
-}
 
-.login-footer p {
-    color: #777;
-    font-size: 0.9rem;
-}
+ .btn-login {
+     width: 100%;
+     padding: 14px;
+     background-color: #ffffff;
+     color: #121212;
+     border: none;
+     border-radius: 6px;
+     font-weight: bold;
+     font-size: 1rem;
+     cursor: pointer;
+     transition: background-color 0.3s ease, transform 0.2s;
+     margin-top: 10px;
+ }
 
-.login-footer a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 500;
-    border-bottom: 1px solid transparent;
-    transition: border-bottom 0.3s;
-}
+ .btn-login:hover {
+     background-color: #cccccc;
+     transform: translateY(-2px);
+ }
 
-.login-footer a:hover {
-    border-bottom: 1px solid #ffffff;
-}
 
-/* Error Message Styling */
-.errorlist {
-    color: #ff4444;
-    list-style: none;
-    padding: 0;
-    font-size: 0.8rem;
-    margin-bottom: 15px;
-    text-align: center;
-}
+ .login-footer {
+     text-align: center;
+     margin-top: 20px;
+ }
+
+ .login-footer p {
+     color: #777;
+     font-size: 0.9rem;
+ }
+
+ .login-footer a {
+     color: #ffffff;
+     text-decoration: none;
+     font-weight: 500;
+     border-bottom: 1px solid transparent;
+     transition: border-bottom 0.3s;
+ }
+
+ .login-footer a:hover {
+     border-bottom: 1px solid #ffffff;
+ }
+
+
+ .errorlist {
+     color: #ff4444;
+     list-style: none;
+     padding: 0;
+     font-size: 0.8rem;
+     margin-bottom: 15px;
+     text-align: center;
+ }
