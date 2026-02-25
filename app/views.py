@@ -49,7 +49,6 @@ def login_view(request):
 
 
 def logout_view(request):
-    # Let logout the consultant/client and redirects them to the login page
     logout(request)
     return redirect('login')
 
@@ -77,7 +76,7 @@ def book_dashboard(request):
 
 
 
-@login_required          # let make it only authenticated user can book a session.
+@login_required       
 def book_session(request, availability_id):
 
     availability = get_object_or_404(Availability, id=availability_id)
@@ -103,13 +102,11 @@ def book_session(request, availability_id):
 def consultant_dash(request):
     # Check if the user is a consultant
     if request.user.role == 'CONSULTANT':
-        # Option A: Get ALL bookings in the system
+        
         all_bookings = Booking.objects.all().order_by('-created_at')
         
-        # Option B: Only get bookings assigned to THIS consultant (if field exists)
-        # all_bookings = Booking.objects.filter(consultant=request.user).order_by('-date')
     else:
-        # Redirect or handle non-consultants
+
         all_bookings = []
 
     return render(request, 'app/consultant_dashboard.html', {'all_bookings': all_bookings})
@@ -136,12 +133,12 @@ def update_booking_status(request, booking_id):
 def update_meeting_link(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     
-    # Security: Only the assigned consultant can edit this specific booking
+    # Only the assigned consultant can edit this specific booking
     if booking.consultant.user != request.user:
         return redirect('consultant-dash')
 
     new_link = request.POST.get('meeting_link')
-    booking.meeting_link = new_link # Direct assignment to Booking model
+    booking.meeting_link = new_link
     booking.save()
     
     return redirect('consultant-dash')
@@ -151,7 +148,7 @@ def update_meeting_link(request, booking_id):
 
 @login_required
 def initialize_payment(request, booking_id):
-    # Let fetch booking and confirm the ownership
+
     booking = get_object_or_404(
         Booking,
         id=booking_id,
@@ -195,9 +192,8 @@ def initialize_payment(request, booking_id):
             headers=headers,
         )
         response_data = response.json()
-        # print("DEBUG PAYSTACK DATA:", response_data)
 
-        print("Response:", response_data)
+        # print("Response:", response_data)
 
         # Let check one time before redirecting
         if response_data.get("status"):
@@ -206,11 +202,9 @@ def initialize_payment(request, booking_id):
             messages.error(request, f"Paystac error: {response_data.get('message')}")   
             return redirect("book-dashboard")
     except Exception as e:
-        print(f"Failed with {e}")
+
         messages.error(request, f"Connrection Error: {str(e)}")
 
-    # Let redirect user to book-dashboard
-    print("Jumped")
     return redirect("book-dashboard")
 
 
@@ -235,7 +229,6 @@ def verify_payment(request):
     )
     response_data = response.json()
 
-    # print("DEBUG PAYSTACK DATA:", response_data)
 
     if response_data.get("status") and response_data["data"]["status"] == "success":
         
@@ -266,9 +259,8 @@ def user_profile(request):
     slots = None
     form = None
 
-    # Logic for Consultants
     if user.role == 'CONSULTANT':
-        # Let get profile or create one if it doesn't exist (prevents RelatedObjectDoesNotExist)
+        
         profile, created = Consultant_Profile.objects.get_or_create(user=user)
         slots = profile.availabilities.all().order_by('date')
         
@@ -299,28 +291,6 @@ def user_profile(request):
         'user': user
     })
 
-# @login_required
-# def payment_dash(request):
-#     # Let check if the user is a consultant
-#     if request.user.role == 'CLIENT':
-#         # Filter: Only payments linked to bookings made by THIS client
-#         all_payments = Payment.objects.filter(booking__client=request.user).order_by('-paid_at')
-#         all_bookings = Booking.objects.filter(client=request.user).order_by('-created_at')
-
-#     elif request.user.role == 'CONSULTANT':
-#         # Filter: Only payments linked to bookings for THIS consultant
-#         all_payments = Payment.objects.filter(booking__availability__consultant__user=request.user).order_by('-paid_at')
-#         all_bookings = Booking.objects.filter(availability__consultant__user=request.user).order_by('-created_at')
-        
-#     else:
-#         # Redirect or handle non-consultants
-#         all_payments = []
-#         all_bookings = []
-
-#     return render(request, 'app/payment_dash.html', {
-#         'all_payments': all_payments, 
-#         'all_bookings': all_bookings
-#     })
 
 @login_required
 def payment_dash(request):
@@ -351,7 +321,6 @@ def availability_slot(request):
         messages.error(request, "Access denied. Only consultants can manage slots.")
         return redirect('home')
 
-    # Let Get the Consultant Profile (Create if missing)
     profile, created = Consultant_Profile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
@@ -362,7 +331,7 @@ def availability_slot(request):
             messages.success(request, "Availability slots updated!")
             return redirect('availability-slot')
     else:
-        # 3. Display existing slots + 1 extra empty row
+        
         formset = AvailabilityFormSet(instance=profile)
 
     return render(request, 'app/availability_slot.html', {
@@ -374,14 +343,14 @@ def availability_slot(request):
 
 @login_required
 def session_review(request, booking_id):
-    # 1. Fetch the actual booking/session being reviewed
+    # Let fetch the actual booking/session being reviewed
     booking = get_object_or_404(Booking, id=booking_id)
 
     if hasattr(booking, 'review'): 
         messages.info(request, "You have already reviewed this session.")
         return redirect('book-dashboard')
     
-    # 2. Prevent people who didn't book the session from reviewing it
+    # Let prevent people who didn't book the session from reviewing it
     if booking.client != request.user:
         messages.error(request, "You can only review sessions you participated in.")
         return redirect('book-dashboard')
@@ -391,9 +360,8 @@ def session_review(request, booking_id):
         if form.is_valid():
             review = form.save(commit=False)
             review.client = request.user
-            review.booking = booking  # Link review to the session/booking
+            review.booking = booking  
             
-            # If your Review model has a consultant field, set it from the booking
             review.consultant = booking.availability.consultant 
             
             review.save()
@@ -411,12 +379,11 @@ def session_review(request, booking_id):
 @login_required
 def update_profile(request):
     if request.method == 'POST':
-        # request.FILES is the most important part!
+        
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             
-            # Redirect back to the correct dashboard based on role
             if request.user.role == 'CONSULTANT':
                 return redirect('profile')
             else:

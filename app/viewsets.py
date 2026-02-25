@@ -16,7 +16,6 @@ class AvailabilityViewSet(ModelViewSet):
         return Availability.objects.filter(consultant__user=self.request.user)
 
     def perform_create(self, serializer):
-    # Pass the profile instance, not the user instance
         serializer.save(consultant=self.request.user.profile)
 
 class BookingViewSet(ModelViewSet):
@@ -34,7 +33,5 @@ class BookingViewSet(ModelViewSet):
         return Booking.objects.filter(client=user)
 
     def perform_create(self, serializer):
-        # This line fixes the NOT NULL constraint error.
-        # It tells Django: "Take the person logged in right now and set them as the client."
         serializer.save(client=self.request.user)
 

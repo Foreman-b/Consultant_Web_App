@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import re_path
 from django.views.static import serve
 
@@ -13,10 +12,11 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('book-dashboard/', views.book_dashboard, name='book-dashboard'),
     path('book-session/<int:availability_id>/', views.book_session, name='book-session'),
-    path('consultant-dash', views.consultant_dash, name='consultant-dash'),
     path('update-status/<int:booking_id>/', views.update_booking_status, name='update-status'),
-    path('update-link/<int:booking_id>/', views.update_meeting_link, name='update-link'),
 
+    path('consultant-dash', views.consultant_dash, name='consultant-dash'),
+    path('availability-slot/', views.availability_slot, name='availability-slot'),
+    path('update-link/<int:booking_id>/', views.update_meeting_link, name='update-link'),
 
     # Now let add payment urls
     path('pay/<int:booking_id>/', views.initialize_payment, name='initialize-payment'),
@@ -28,7 +28,6 @@ urlpatterns = [
     path('profile/', views.user_profile, name='profile'),
     path('update-profile/', views.update_profile, name='update-profile'),
     
-    path('availability-slot/', views.availability_slot, name='availability-slot'),
 
     # Let create session review right here
     path('review-session/<int:booking_id>/', views.session_review, name='session-review'),

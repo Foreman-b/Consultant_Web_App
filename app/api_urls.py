@@ -11,6 +11,7 @@ consultant_router.register("availabilities", AvailabilityViewSet, basename="cons
 client_router = DefaultRouter()
 client_router.register("bookings", BookingViewSet, basename="client-bookings")
 
+
 urlpatterns = [
     path('consultant/', include(consultant_router.urls)),
     path('client/', include(client_router.urls)),

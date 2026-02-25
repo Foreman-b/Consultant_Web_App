@@ -17,16 +17,18 @@ class UserRegisterForm(UserCreationForm):
         Check if the email is already in use in the database.
         """
         email = self.cleaned_data.get('email')
-        # Check if any user already has this email
+        
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("A user with that email already exists.")
         return email
     
+
 class ConsultantProfileForm(forms.ModelForm):
 
     class Meta:
         model = Consultant_Profile
         fields = ('specialization', 'bio', 'is_active')
+
 
 class AvailabilityForm(forms.ModelForm):
 
@@ -42,7 +44,7 @@ AvailabilityFormSet = forms.inlineformset_factory(
     Consultant_Profile, 
     Availability, 
     form=AvailabilityForm, 
-    extra=1,      # How many empty slots to show by default
+    extra=1,      
     can_delete=True # Allows consultants to remove a date
 )
 

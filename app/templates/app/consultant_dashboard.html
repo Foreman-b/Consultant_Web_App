@@ -3,8 +3,11 @@
 
 {% block extra_head %}
 <title>{% block title %} Booking Dashboard {% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+    integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+    crossorigin="anonymous"></script>
 {% endblock %}
 
 
@@ -14,9 +17,9 @@
         <h2>All Client Booking Sessions</h2>
         <span class="badge bg-primary">{{ all_bookings|length }} Total Sessions</span>
     </div>
-    
+
+
     <div class="table-responsive shadow-sm rounded">
-        <!-- Added table-striped for better readability -->
         <table class="table table-hover table-striped mb-0">
             <thead class="table-dark">
                 <tr>
@@ -32,47 +35,46 @@
                 <tr>
                     <td class="fw-bold">{{ booking.client.username }}</td>
                     <td>{{ booking.reason_for_session }}</td>
-                    <!-- Using |date filter for a cleaner look -->
+
                     <td>{{ booking.created_at|date:"M d, Y H:i" }}</td>
                     <td>
                         <form action="{% url 'update-status' booking.id %}" method="POST">
                             {% csrf_token %}
-                            <select name="status" onchange="this.form.submit()" 
-                                    class="form-select form-select-sm shadow-sm 
+                            <select name="status" onchange="this.form.submit()" class="form-select form-select-sm shadow-sm 
                                     {% if booking.status == 'PENDING' %}border-warning text-warning-emphasis
                                     {% elif booking.status == 'CANCELLED' %}border-danger text-danger
                                     {% else %}border-success text-success{% endif %}">
-                                
+
                                 {% for choice in booking.StatusChoices.choices %}
-                                    <option value="{{ choice.0 }}" {% if booking.status == choice.0 %}selected{% endif %}>
-                                        {{ choice.1 }}
-                                    </option>
+                                <option value="{{ choice.0 }}" {% if booking.status==choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </form>
                     </td>
                     <td>
                         {% if request.user == booking.consultant.user %}
-                            <!-- Consultant View: Inline Edit Form -->
-                            <form action="{% url 'update-link' booking.id %}" method="POST" class="d-flex gap-1">
-                                {% csrf_token %}
-                                <input type="url" name="meeting_link" 
-                                    value="{{ booking.meeting_link|default:'' }}" 
-                                    placeholder="Enter Meeting Link"
-                                    class="form-control form-control-sm border-primary-subtle">
-                                <button type="submit" class="btn btn-sm btn-primary" title="Save Link">
-                                   Send <i class="bi bi-save"></i>
-                                </button>
-                            </form>
+
+                        <form action="{% url 'update-link' booking.id %}" method="POST" class="d-flex gap-1">
+                            {% csrf_token %}
+                            <input type="url" name="meeting_link" value="{{ booking.meeting_link|default:'' }}"
+                                placeholder="Enter Meeting Link"
+                                class="form-control form-control-sm border-primary-subtle">
+                            <button type="submit" class="btn btn-sm btn-primary" title="Save Link">
+                                Send <i class="bi bi-save"></i>
+                            </button>
+                        </form>
                         {% else %}
-                            <!-- Client View: Join Button -->
-                            {% if booking.meeting_link %}
-                                <a href="{{ booking.meeting_link }}" target="_blank" class="btn btn-sm btn-outline-success fw-bold">
-                                    <i class="bi bi-camera-video"></i> Join Meeting
-                                </a>
-                            {% else %}
-                                <span class="badge rounded-pill bg-light text-dark border">Waiting for Link...</span>
-                            {% endif %}
+
+                        {% if booking.meeting_link %}
+                        <a href="{{ booking.meeting_link }}" target="_blank"
+                            class="btn btn-sm btn-outline-success fw-bold">
+                            <i class="bi bi-camera-video"></i> Join Meeting
+                        </a>
+                        {% else %}
+                        <span class="badge rounded-pill bg-light text-dark border">Waiting for Link...</span>
+                        {% endif %}
                         {% endif %}
                     </td>
                 </tr>

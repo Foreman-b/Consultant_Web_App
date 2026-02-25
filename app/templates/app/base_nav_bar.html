@@ -25,14 +25,14 @@
                 <li><a href="{% url 'home' %}">Home</a></li>
 
                 {% if not user.is_authenticated %}
-                <!-- 1. GUEST STATE -->
+
                 <a href="{% url 'book-dashboard' %}">Booking</a>
 
                 {% endif %}
 
                 {% if user.is_authenticated %}
                 {% if user.role == 'CLIENT' %}
-                <!-- 2. CLIENT STATE -->
+
                 <a href="{% url 'book-dashboard' %}">Booking</a>
                 {% endif %}
 
@@ -53,7 +53,7 @@
                         <a href="{% url 'profile' %}">My Profile</a>
 
                         <hr>
-                        <!-- Re-enabled the Logout Form for security -->
+
                         <form action="{% url 'logout' %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="logout-btn">Logout</button>
@@ -68,7 +68,7 @@
         </div>
     </nav>
 
-    <!-- This is where home.html and other pages will load -->
+
     <main class="container">
         {% block content %}
         {% endblock %}
