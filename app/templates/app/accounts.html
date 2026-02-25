@@ -1,0 +1,91 @@
+{% extends "app/base_nav_bar.html" %}
+{% load static %}
+
+
+
+{% block title %} My Profile {% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white p-4">
+                    <h3 class="mb-0">Account Settings</h3>
+                    <p class="mb-0 small text-light">Manage your {{ request.user.role|title }} profile</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-4 text-center">
+                              
+                                {% if request.user.profile_picture %}
+                                    <img src="{{ request.user.profile_picture.url }}" class="rounded-circle img-thumbnail profile-img-preview">
+                                {% else %}
+                                    <i class="bi bi-person-fill display-1 text-secondary"></i>
+                                {% endif %}
+
+                                    <a href="{% url 'update-profile' %}" class="btn btn-sm btn-secondary">
+                                        Edit Profile picture
+                                    </a>                
+                                    
+                               
+                            </div>
+                            <div class="col-md-8">
+                                <h4 class="mb-1">{{ request.user.username }}</h4>
+                                <p class="text-muted mb-2">{{ request.user.email }}</p>
+                                <span class="badge bg-info text-dark">{{ request.user.role }}</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+            
+
+                        
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="card p-3 mb-4">
+            {{ form.as_p }}
+        </div>
+
+        {% if user.role == 'CONSULTANT' %}
+            <div class="card p-3 bg-light">
+                <h4>My Scheduled Availability</h4>
+                <ul class="list-group">
+                    {% for slot in slots %}
+                        <li class="list-group-item">
+                            {{ slot.date }} - Slots: {{ slot.max_slot }}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No dates set yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+        {% endif %}
+                                          
+        <div class="card mt-4">
+        
+        <button type="submit" class="btn btn-dark mt-3">Update Profile</button>
+    </form>
+     
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

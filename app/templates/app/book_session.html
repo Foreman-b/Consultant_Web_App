@@ -1,0 +1,32 @@
+{% extends "app/base_nav_bar.html" %}
+{% load static %}
+
+{% block extra_head %}
+    <title>{% block title %} Book Session {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/book_session.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Link to your CSS file here if not using a <style> block -->
+<div class="container">
+    <h2>Book a Session</h2>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+
+        <button type="submit" class="btn-submit">
+            Confirm Booking
+        </button>
+    </form>
+    
+    <div class="text-center mt-3">
+        <a href="{% url 'book-dashboard' %}" style="color: #7f8c8d; text-decoration: none; font-size: 0.9rem;">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

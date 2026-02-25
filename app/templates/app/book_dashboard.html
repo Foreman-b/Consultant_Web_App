@@ -1,0 +1,122 @@
+{% extends "app/base_nav_bar.html" %}
+{% load static %}
+
+
+
+
+
+{% block extra_head %}
+    <title>{% block title %} Bookings {% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+    {% comment %} <link rel="stylesheet" href="{% static 'css/book_dashboard.css' %}"> {% endcomment %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="text-center mb-5">
+    <h2 class="fw-bold custom-heading">YOU HAVE {{ user_bookings.count }} ACTIVE SESSIONS</h2>
+    <br><br>
+</div>
+        {% comment %} <h2 class="fw-bold text-center my-5 custom-heading">Your Booked Sessions</h2> {% endcomment %}
+    </div>
+
+    <div class="row">
+        {% for booking in user_bookings %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-1">Session with {{ booking.consultant.user.username }}</h5>
+                        <p class="text-muted mb-2">
+                            Date: <i class="bi bi-calendar"></i> {{ booking.availability.date }} 
+                            {{ booking.availability.start_time }}
+                        </p>
+                        
+                        <p class="reason-text small"> Reason for Session: "{{ booking.reason_for_session|default:'No reason provided' }}"</p> <br><br>
+                        
+                        
+
+                        {% comment %} <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge {% if booking.status == 'pending' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                    {{ booking.status|title }}
+                                </span>
+                                <br><br>
+
+                                <div class="btn-group-container">
+                                    {% if booking.status == 'pending' %}
+                                        <a href="{% url 'initialize-payment' booking.id %}" class="btn btn-pay-now">Pay Now</a>
+                                    {% endif %}
+                                   
+                                    {% if booking.meeting_link and booking.status == 'confirmed' %}
+                                        <a href="{{ booking.meeting_link }}" target="_blank" class="btn btn-primary btn-sm ms-2">Join</a>
+                                    {% endif %}
+                                </div>
+                                
+                            </div>
+                        </div> {% endcomment %}
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge {% if booking.status == 'pending' %}bg-warning text-dark{% elif booking.status == 'completed' %}bg-info{% else %}bg-success{% endif %}">
+                                    {{ booking.status|title }}
+                                </span>
+                                <br><br>
+
+                                <div class="btn-group-container">
+                                    {% if booking.status == 'pending' %}
+                                        <a href="{% url 'initialize-payment' booking.id %}" class="btn btn-pay-now">Pay Now</a>
+                                    {% endif %}
+                                    
+                                    {% if booking.meeting_link and booking.status == 'confirmed' %}
+                                        <a href="{{ booking.meeting_link }}" target="_blank" class="btn btn-primary btn-sm ms-2">Join</a>
+                                    {% endif %}
+
+                                    {% if booking.status == 'completed' %}
+                                        <a href="{% url 'session-review' booking.id %}" class="btn btn-outline-primary btn-sm ms-2">
+                                            <i class="bi bi-star"></i> Review Session
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
+
+
+
+
+
+
+
+
+
+                        
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">You haven't booked any sessions yet. Check available slots below!</p>
+            </div>
+        {% endfor %}
+    </div>
+<br><br>
+    <hr class="my-5">
+    
+    <h3 class="fw-bold mb-4">Available to Book</h3>
+    <div class="row">
+        <!-- Your "Available to Book" loop continues here -->
+    </div>
+{% if user.is_authenticated %}
+    {% for slot in availability_list %}
+    <!-- Ensure 'slot.id' is not empty -->
+       <a href="{% url 'book-session' slot.id %}" class="btn btn-outline-primary">Book Now</a>
+{% endfor %}
+
+{% else %}
+    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-secondary">Login to Book</a>
+{% endif %}
+</div>
+<br><br><br>
+{% endblock %}
