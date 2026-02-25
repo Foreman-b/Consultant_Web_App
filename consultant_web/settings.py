@@ -13,9 +13,9 @@ load_dotenv()
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://consultant-web-app.onrender.com', 'consultant-web-app.onrender.com']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "https://consultant-web-app.com", "consultant-web-app.com"]
 
 
 
@@ -75,12 +75,20 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': BASE_DIR / 'db.sqlite3',
+
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('RD_NAME'),
-        'USER': os.getenv('RD_USERNAME'),
-        'PASSWORD': os.getenv('RD_PASSWORD'),
-        'HOST': os.getenv('RD_HOST'),
-        'PORT': os.getenv('RD_PORT'),
+        'NAME': os.getenv("RDS_NAME"),
+        'USER': os.getenv("RDS_USER"),
+        'PASSWORD': os.getenv("RDS_PASSWORD"),
+        'HOST': os.getenv("RDS_HOST"),
+        'PORT': os.getenv("RDS_PORT"),
+
+        # RENDER DB
+        # 'NAME': os.getenv('RD_NAME'),
+        # 'USER': os.getenv('RD_USERNAME'),
+        # 'PASSWORD': os.getenv('RD_PASSWORD'),
+        # 'HOST': os.getenv('RD_HOST'),
+        # 'PORT': os.getenv('RD_PORT'),
         
     }
 }
