@@ -14,6 +14,8 @@ from django.utils import timezone
 import requests
 from django.contrib import messages
 import uuid
+from django.views.decorators.http import require_POST
+
 
 
 
@@ -113,7 +115,6 @@ def consultant_dash(request):
     return render(request, 'app/consultant_dashboard.html', {'all_bookings': all_bookings})
 
 
-from django.views.decorators.http import require_POST
 
 @require_POST
 @login_required
@@ -163,11 +164,12 @@ def initialize_payment(request, booking_id):
     # Let create re-usable payment
     payment, create = Payment.objects.get_or_create(
         booking =booking,
-        defaults={"amount": amount}
+        amount= amount,
     )
 
     # Now let prevent user from double payment
     if payment.status == Payment.PaymentStatus.SUCCESS:
+        print("payment has been made")
         return redirect("book-dashboard")
 
     # Let handle Paystack API Setup
@@ -194,31 +196,21 @@ def initialize_payment(request, booking_id):
         )
         response_data = response.json()
         # print("DEBUG PAYSTACK DATA:", response_data)
-        # Let handle duplicate reference
-        if not response_data.get("status") and "reference" in response_data.get("message", "").lower():
-            #Let it generate new reference and try one more time
-            payment.payment_reference = str(uuid.uuid4())
-            payment.save()
 
+        print("Response:", response_data)
 
-            payload["reference"] = payment.payment_reference
-            response = requests.post(
-                url, 
-                json=payload,
-                headers=headers
-            )
-            response_data = response.json()
-            # print("DEBUG PAYSTACK DATA:", response_data)
-
-            # Let check one time before redirecting
-            if response_data.get("status"):
-                return redirect(response_data["data"]["authorization_url"])
-            else:
-                messages.error(request, f"Paystac error: {response_data.get('message')}")   
+        # Let check one time before redirecting
+        if response_data.get("status"):
+            return redirect(response_data["data"]["authorization_url"])
+        else:    
+            messages.error(request, f"Paystac error: {response_data.get('message')}")   
+            return redirect("book-dashboard")
     except Exception as e:
+        print(f"Failed with {e}")
         messages.error(request, f"Connrection Error: {str(e)}")
 
-    # Let redirect user to Paystack chekout
+    # Let redirect user to book-dashboard
+    print("Jumped")
     return redirect("book-dashboard")
 
 

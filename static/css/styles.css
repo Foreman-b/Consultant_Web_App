@@ -7,10 +7,11 @@
 
 .nav-container {
     display: flex;
-    justify-content: flex ;
+    justify-content: space-around;
     align-items: center;
+    width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .nav-links {
@@ -42,14 +43,16 @@
     position: absolute;
     background-color: #262626;
     min-width: 160px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
     z-index: 1;
     border-radius: 4px;
-    right: 0; /* Align to right so it doesn't go off-screen */
+    right: 0;
+    /* Align to right so it doesn't go off-screen */
 }
 
 /* Links inside dropdown */
-.dropdown-content a, .logout-btn {
+.dropdown-content a,
+.logout-btn {
     color: #ccc;
     padding: 12px 16px;
     text-decoration: none;
@@ -62,7 +65,8 @@
     cursor: pointer;
 }
 
-.dropdown-content a:hover, .logout-btn:hover {
+.dropdown-content a:hover,
+.logout-btn:hover {
     background-color: #333;
     color: white;
 }
@@ -92,16 +96,22 @@ hr {
 
 
 .logo {
-    color: #ffffff !important; /* Forces the color to pure white */
-    text-decoration: none;    /* Removes the underline if it's a link */
-    font-weight: bold;        /* Makes it stand out */
-    font-size: 1.5rem; 
-    margin: 0;       /* Adjust size as needed */
+    color: #ffffff !important;
+    /* Forces the color to pure white */
+    text-decoration: none;
+    /* Removes the underline if it's a link */
+    font-weight: bold;
+    /* Makes it stand out */
+    font-size: 1.5rem;
+    margin: 0;
+    /* Adjust size as needed */
     padding: 0x
 }
 
 /* Ensure it stays white even if it's a visited link */
-.logo:visited, .logo:hover, .logo:active {
+.logo:visited,
+.logo:hover,
+.logo:active {
     color: #ffffff;
 }
 
@@ -112,7 +122,8 @@ hr {
     background-color: #1a1a1a;
     color: #b0b0b0;
     padding: 1rem 2rem 1rem;
-    margin-top: 6rem; /* Keeps it away from page content */
+    margin-top: 6rem;
+    /* Keeps it away from page content */
     font-family: 'Segoe UI', sans-serif;
     border-top: 1px solid #333;
 }
@@ -159,19 +170,19 @@ body {
 
 .hero-section {
     /* Set height to exactly 100% of the viewport height */
-    min-height: 100vh; 
-    
+    min-height: 100vh;
+
     /* Center the content inside */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
+
     /* Ensure background covers the whole area */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    
+
     /* Optional: Add some padding so content doesn't touch edges on mobile */
     padding: 20px;
     text-align: center;
@@ -189,7 +200,8 @@ body {
 }
 
 .accent {
-    color: #007bff; /* Professional Blue Accent */
+    color: #007bff;
+    /* Professional Blue Accent */
 }
 
 .hero-content p {
@@ -202,6 +214,7 @@ body {
     display: flex;
     gap: 20px;
     text-align: center;
+    justify-content: center;
 }
 
 /* Buttons */
@@ -267,8 +280,10 @@ body {
 
 /* Update your styles.css */
 body {
-    background-color: #000000; /* Deep Black */
-    color: #ffffff;            /* White text for contrast */
+    background-color: #000000;
+    /* Deep Black */
+    color: #ffffff;
+    /* White text for contrast */
     margin: 0;
     padding: 0;
 }
@@ -295,4 +310,37 @@ body {
 
 .accent {
     color: #0d6efd; /* Keep your accent color bright so it pops against black
+}*/
+
+@media (max-width: 768px) {
+
+    .navbar {
+        padding: 0.8rem 2rem;
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: start;
+        margin: 0;
+        padding: 0.5rem 1rem;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-start;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero-btns {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        justify-content: center;
+    }
 }
