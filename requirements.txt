@@ -12,6 +12,7 @@ jsonschema
 jsonschema-specifications
 pillow
 psycopg2-binary
+psycopg2
 python-dotenv
 PyYAML
 referencing

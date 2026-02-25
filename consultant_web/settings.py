@@ -77,11 +77,11 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
 
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("RDS_NAME"),
-        'USER': os.environ.get("RDS_USER"),
-        'PASSWORD': os.environ.get("RDS_PASSWORD"),
-        'HOST': os.environ.get("RDS_HOST"),
-        'PORT': os.environ.get("RDS_PORT"),
+        'NAME': os.environ["RDS_NAME"],
+        'USER': os.environ["RDS_USER"],
+        'PASSWORD': os.environ["RDS_PASSWORD"],
+        'HOST': os.environ["RDS_HOST"],
+        'PORT': os.environ["RDS_PORT"],
 
         # RENDER DB
         # 'NAME': os.getenv('RD_NAME'),
@@ -151,8 +151,8 @@ LOGOUT_REDIRECT_URL = 'login'
 
 
 # PAYSTACK PAYMENT SETTINGS
-PAYSTACK_PUBLIC_KEY = os.environ.get('PK_PUBLIC_KEY')
-PAYSTACK_SECRET_KEY = os.environ.get('PK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = os.environ['PK_PUBLIC_KEY']
+PAYSTACK_SECRET_KEY = os.environ['PK_SECRET_KEY']
 
 
 REST_FRAMEWORK = {
