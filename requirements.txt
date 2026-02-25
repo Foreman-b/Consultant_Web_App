@@ -11,7 +11,7 @@ inflection
 jsonschema
 jsonschema-specifications
 pillow
-psycopg2
+psycopg2-binary
 python-dotenv
 PyYAML
 referencing

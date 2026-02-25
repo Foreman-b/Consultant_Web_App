@@ -10,7 +10,7 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -77,11 +77,11 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
 
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("RDS_NAME"),
-        'USER': os.getenv("RDS_USER"),
-        'PASSWORD': os.getenv("RDS_PASSWORD"),
-        'HOST': os.getenv("RDS_HOST"),
-        'PORT': os.getenv("RDS_PORT"),
+        'NAME': os.environ.get("RDS_NAME"),
+        'USER': os.environ.get("RDS_USER"),
+        'PASSWORD': os.environ.get("RDS_PASSWORD"),
+        'HOST': os.environ.get("RDS_HOST"),
+        'PORT': os.environ.get("RDS_PORT"),
 
         # RENDER DB
         # 'NAME': os.getenv('RD_NAME'),
@@ -151,8 +151,8 @@ LOGOUT_REDIRECT_URL = 'login'
 
 
 # PAYSTACK PAYMENT SETTINGS
-PAYSTACK_PUBLIC_KEY = os.getenv('PK_PUBLIC_KEY')
-PAYSTACK_SECRET_KEY = os.getenv('PK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = os.environ.get('PK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = os.environ.get('PK_SECRET_KEY')
 
 
 REST_FRAMEWORK = {
