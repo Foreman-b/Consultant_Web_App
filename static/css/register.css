@@ -1,3 +1,9 @@
+.form-container>ul,
+.helptext {
+    color: #666;
+}
+
+
 /* Container to center the large form */
 .register-wrapper {
     display: flex;
@@ -11,7 +17,8 @@
 .register-card {
     background-color: #1e1e1e;
     width: 100%;
-    max-width: 500px; /* Slightly wider for the extra fields */
+    max-width: 500px;
+    /* Slightly wider for the extra fields */
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
@@ -62,7 +69,6 @@
 /* Help Text (The password requirements) */
 .helptext {
     display: block;
-    color: #666;
     font-size: 0.75rem;
     margin-top: 6px;
     line-height: 1.4;
@@ -82,7 +88,8 @@
 .btn-register {
     width: 100%;
     padding: 14px;
-    background-color: #ffffff; /* High contrast white button */
+    background-color: #ffffff;
+    /* High contrast white button */
     color: #121212;
     border: none;
     border-radius: 6px;
