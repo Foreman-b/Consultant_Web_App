@@ -420,7 +420,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            # This is important! It keeps the user logged in after the password change
+             
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
             return redirect('profile')
@@ -432,7 +432,7 @@ def change_password(request):
 def forgot_password_step1(request):
     if request.method == 'POST':
         identifier = request.POST.get('identifier')
-        # Look for user by username OR email
+         
         user = CustomUser.objects.filter(username=identifier).first() or \
                CustomUser.objects.filter(email=identifier).first()
         
@@ -454,7 +454,7 @@ def forgot_password_step2(request, user_id):
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
         
-        # Use the method we wrote in your CustomUser model
+        # Let use the method we wrote in your CustomUser model
         if user.check_security_answer(answer):
             if new_password == confirm_password:
                 user.set_password(new_password)
