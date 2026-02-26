@@ -33,7 +33,7 @@
             <tbody>
                 {% for booking in all_bookings %}
                 <tr>
-                    <td class="fw-bold">{{ booking.client.username }}</td>
+                    <td class="fw-bold">{{ booking.client.get_full_name }}</td>
                     <td>{{ booking.reason_for_session }}</td>
 
                     <td>{{ booking.created_at|date:"M d, Y H:i" }}</td>
@@ -89,5 +89,42 @@
         </table>
     </div>
 </div>
+
+<br><br>
+<div class="card mb-4">
+    <div class="card-body text-center">
+        <h5 class="card-title">Consultant Rating</h5>
+        <h2 class="text-warning">
+            {{ avg_rating|floatformat:1|default:"0.0" }} <span class="fs-6 text-muted">/ 5 ★</span>
+        </h2>
+    </div>
+</div>
+
+<h3>Client Feedback</h3>
+<div class="list-group">
+    {% for review in reviews %}
+        <div class="list-group-item list-group-item-action py-3">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1 text-primary">
+                    {{ review.client.get_full_name|default:review.client.username }}
+                </h6>
+                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <div class="mb-2">
+                {% for i in "12345" %}
+                    <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill text-warning{% endif %}"></i>
+                {% endfor %}
+            </div>
+            <p class="mb-1 italic text-secondary">"{{ review.comment }}"</p>
+        </div>
+    {% empty %}
+        <div class="alert alert-light">No reviews received yet.</div>
+    {% endfor %}
+</div>
+
+
+
+
+
 <br><br><br><br><br><br><br><br><br><br>
 {% endblock %}

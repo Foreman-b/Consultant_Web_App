@@ -10,7 +10,7 @@ class UserRegisterForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number')
+        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'security_question', 'security_answer')
 
     def clean_email(self):
         """
@@ -22,6 +22,11 @@ class UserRegisterForm(UserCreationForm):
             raise forms.ValidationError("A user with that email already exists.")
         return email
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['security_question'].required = True
+        self.fields['security_answer'].required = True
+        self.fields['security_answer'].widget.attrs.update({'placeholder': 'This will be used to recover your account'})
 
 class ConsultantProfileForm(forms.ModelForm):
 
@@ -84,7 +89,7 @@ class ReviewForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'phone_number']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'security_question', 'security_answer']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -93,10 +98,26 @@ class UserUpdateForm(forms.ModelForm):
 
 
 
-class ProfileUpdateForm(forms.ModelForm):
+class ClientProfilePicForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['profile_picture']
         widgets = {
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class ConsultantProfilePicForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'profile_picture', 'security_question', 'security_answer']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
+            'security_question': forms.Select(attrs={'class': 'form-select'}),
+            'security_answer': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Answer to your security question'}),
         }

@@ -31,7 +31,7 @@
             <tbody>
                 {% for payment in payments %}
                 <tr>
-                    <td class="fw-bold">{{ payment.booking.client.username }}</td>
+                    <td class="fw-bold">{{ payment.booking.client.get_full_name }}</td>
 
                     <td>{{ payment.booking.reason_for_session }}</td>
 

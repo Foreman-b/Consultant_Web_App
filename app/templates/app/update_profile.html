@@ -47,17 +47,27 @@
                             </span>
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.as_p }}
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-secondary"> Upload </button>
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="mb-3">
+                                    <label class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="text-danger small">{{ field.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-secondary"> Update </button>
                             <a href="{% if user.role == 'CONSULTANT' %}{% url 'profile' %}{% else %}{% url 'profile' %}{% endif %}"
                                 class="btn btn-outline-secondary">
                                 Cancel
                             </a>
                         </div>
+                        </form>
+
+                        
                     </form>
                 </div>
             </div>
