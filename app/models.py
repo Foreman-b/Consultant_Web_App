@@ -16,7 +16,24 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CLIENT)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     profile_picture = models.ImageField(upload_to="upload/profile_picture", null=True, blank=True)
+
+    SECURITY_QUESTIONS = [
+        ('pet', "What was the name of your first pet?"),
+        ('city', "In what city were you born?"),
+        ('school', "What was the name of your elementary school?"),
+    ]
+    security_question = models.CharField(max_length=255, choices=SECURITY_QUESTIONS, blank=True, null=True)
+    security_answer = models.CharField(max_length=255, blank=True, null=True)
     
+    def check_security_answer(self, raw_answer):
+        # We lowercase and strip to avoid "Cat" vs "cat" issues
+        return self.security_answer.lower().strip() == raw_answer.lower().strip()
+    
+    def save(self, *args, **kwargs):
+        if self.security_answer:
+            self.security_answer = self.security_answer.lower().strip()
+        super().save(*args, **kwargs)
+
     @property
     def is_consultant(self):
         return self.role == self.Role.CONSULTANT

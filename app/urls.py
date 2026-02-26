@@ -32,7 +32,11 @@ urlpatterns = [
     # Let create session review right here
     path('review-session/<int:booking_id>/', views.session_review, name='session-review'),
 
+    # Password reset and Forget Password
+    path('profile/password/', views.change_password, name='change-password'),
 
+    path('forgot-password/', views.forgot_password_step1, name='forgot_password_step1'),
+    path('forgot-password/reset/<int:user_id>/', views.forgot_password_step2, name='forgot_password_step2'),
     
 
 ] 

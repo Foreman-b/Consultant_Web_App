@@ -3,7 +3,7 @@ from .models import Availability, Booking, CustomUser, Payment, Consultant_Profi
 from .forms import (
     UserRegisterForm, ConsultantProfileForm, UserUpdateForm,
     AvailabilityForm, BookingForm, PaymentForm, ReviewForm, 
-    AvailabilityFormSet, ProfileUpdateForm
+    AvailabilityFormSet, ClientProfilePicForm, ConsultantProfilePicForm
 )
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -15,7 +15,9 @@ import requests
 from django.contrib import messages
 import uuid
 from django.views.decorators.http import require_POST
-
+from django.db.models import Avg
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 
 
@@ -28,6 +30,7 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Your are successfully registered.")
             return redirect('login')
     
     else:
@@ -41,6 +44,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, "Successfully logged in.")
             return redirect('home')
     else:
         form = AuthenticationForm()
@@ -50,6 +54,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
+    messages.success(request, "Logged out.")
     return redirect('login')
 
 
@@ -90,6 +95,7 @@ def book_session(request, availability_id):
             booking.availability = availability
             booking.consultant = availability.consultant
             booking.save()
+            messages.success(request, "Session successfully booked, click Pay.")
             return redirect("book-dashboard")
 
     else:
@@ -100,16 +106,28 @@ def book_session(request, availability_id):
 
 @login_required
 def consultant_dash(request):
-    # Check if the user is a consultant
+    
     if request.user.role == 'CONSULTANT':
         
         all_bookings = Booking.objects.all().order_by('-created_at')
+        avg_rating = Review.objects.filter(
+        consultant__user=request.user
+        ).aggregate(Avg('rating'))['rating__avg']
+        reviews = Review.objects.filter(
+        consultant__user=request.user
+        ).order_by('-created_at')
         
     else:
 
         all_bookings = []
+        avg_rating = []
+        reviews = []
 
-    return render(request, 'app/consultant_dashboard.html', {'all_bookings': all_bookings})
+    return render(request, 'app/consultant_dashboard.html', {
+        'all_bookings': all_bookings,
+        'avg_rating': avg_rating,
+        'reviews': reviews,
+    })
 
 
 
@@ -378,17 +396,74 @@ def session_review(request, booking_id):
 
 @login_required
 def update_profile(request):
+    if request.user.is_consultant: 
+        form_class = ConsultantProfilePicForm
+    else:
+        form_class = ClientProfilePicForm
+
     if request.method == 'POST':
         
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        form = form_class(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            
-            if request.user.role == 'CONSULTANT':
-                return redirect('profile')
-            else:
-                return redirect('profile')
+            messages.success(request, "Updated")
+            return redirect('profile')
     else:
-        form = ProfileUpdateForm(instance=request.user)
+        form = form_class(instance=request.user)
     
     return render(request, 'app/update_profile.html', {'form': form})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+             
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('profile')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'app/change_password.html', {'form': form})
+
+
+def forgot_password_step1(request):
+    if request.method == 'POST':
+        identifier = request.POST.get('identifier')
+         
+        user = CustomUser.objects.filter(username=identifier).first() or \
+               CustomUser.objects.filter(email=identifier).first()
+        
+        if user:
+            if user.security_question and user.security_answer:
+                return redirect('forgot_password_step2', user_id=user.id)
+            else:
+                messages.error(request, "This account has no security question set. Please contact admin.")
+        else:
+            messages.error(request, "No account found with that username/email.")
+            
+    return render(request, 'app/forgot_password_step1.html')
+
+def forgot_password_step2(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    
+    if request.method == 'POST':
+        answer = request.POST.get('answer')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Let use the method we wrote in your CustomUser model
+        if user.check_security_answer(answer):
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, "Success! Your password has been reset.")
+                return redirect('login')
+            else:
+                messages.error(request, "Passwords do not match.")
+        else:
+            messages.error(request, "Incorrect answer to security question.")
+            
+    return render(request, 'app/forgot_password_step2.html', {'user': user})

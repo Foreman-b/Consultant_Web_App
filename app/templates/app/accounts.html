@@ -37,15 +37,24 @@
                                 {% else %}
                                 <i class="bi bi-person-fill display-1 text-secondary"></i>
                                 {% endif %}
-
-                                <a href="{% url 'update-profile' %}" class="btn btn-sm btn-secondary">
-                                    Edit Profile picture
+                                
+                                    {% if request.user.is_consultant %}
+                                   <a href="{% url 'update-profile' %}" class="btn btn-sm btn-secondary">
+                                    Update Profile Details
                                 </a>
-
+                                {% else %}
+                                <a href="{% url 'update-profile' %}" class="btn btn-sm btn-secondary">
+                                    Upload Profile picture
+                                </a>
+                                {% endif %}
+                                <br><br>
+                                <a href="{% url 'change-password' %}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-key"></i> Change Password
+                                </a>
 
                             </div>
                             <div class="col-md-8">
-                                <h4 class="mb-1">{{ request.user.username }}</h4>
+                                <h4 class="mb-1">{{ request.user.get_full_name }}</h4>
                                 <p class="text-muted mb-2">{{ request.user.email }}</p>
                                 <span class="badge bg-info text-dark">{{ request.user.role }}</span>
                             </div>
