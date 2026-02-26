@@ -1,74 +1,117 @@
-## Consultant Booking Web Application
-Full-Stack Production Documentation
+# Consultant Booking Web Application
 
-Url: https://consultant-web-app-production.up.railway.app
+### Full-Stack Production Platform (Django & REST Framework)
 
-A robust, role-based Django platform enabling clients to discover consultants, book availability-based sessions, and provide feedback through a structured review system.
+**Live Production URL:** [https://consultant-web-app-production.up.railway.app](https://consultant-web-app-production.up.railway.app)
 
+A robust, role-based marketplace enabling clients to discover consultants, book availability-based sessions via secure payments, and provide verified feedback.
 
-# 1. Project Overview
-A professional marketplace platform designed to bridge the gap between expert consultants and clients. The application manages the entire lifecycle of a professional engagement: from availability scheduling and secure Paystack payments to virtual meeting hosting and peer reviews.
+---
 
-# 2. System Architecture
-Technical Stack
-Framework: Django 5.x (Python 3.13)
+## 1. Project Overview
 
-Database: PostgreSQL (Production grade, relational storage)
+This application manages the entire lifecycle of professional consulting engagements. It transitions from a traditional monolithic web app to an API-ready platform, handling everything from complex scheduling logic and **Paystack** financial verification to virtual meeting hosting and peer-reviewed ratings.
 
-Frontend: Bootstrap 5 with custom "Dark Mode" CSS
+## 2. Technical Stack
 
-Static Management: WhiteNoise (for serving files in production)
+* **Backend:** Django 5.x (Python 3.13)
+* **API Layer:** Django REST Framework (DRF)
+* **API Documentation:** Swagger UI / OpenAPI 3.0
+* **Database:** PostgreSQL (Production-grade relational storage)
+* **Frontend:** Bootstrap 5 (Custom Dark Mode) & SweetAlert2 (Dynamic Notifications)
+* **Deployment:** Railway (PaaS) with Gunicorn & WhiteNoise
 
-Payment Gateway: Paystack API (Secure NGN/USD transactions)
+## 3. Core Database Architecture
 
-WSGI Server: Gunicorn
-
-# 3. Core Database Models (The "Big Six")
 The system logic is built around six primary pillars:
 
-# 4. Key Workflows
-A. Availability & Booking
-Consultants use Inline Formsets to manage multiple dates simultaneously. Clients browse these slots and select a time. The system prevents overbooking by tracking max_slots per availability instance.
+1. **CustomUser:** Extended `AbstractUser` featuring **TextChoices** for Roles (Client/Consultant) and specialized properties `is_consultant`/`is_client`.
+2. **ConsultantProfile:** One-to-one relationship with User, storing professional bios and profile imagery.
+3. **Availability:** Management of time-slots using Inline Formsets.
+4. **Booking:** The central contract linking Client, Consultant, and Payment status.
+5. **Payment:** Paystack - Sandbox/Test Mode
+6. **Review:** A verified feedback system restricted to **COMPLETED** sessions only.
 
-B. Payment Integration (Paystack)
-The booking remains "Pending" until a successful Paystack transaction is recorded.
+## 4. Key Workflows
 
-Initialize: Generate a unique reference and redirect to Paystack.
+### A. Availability & Booking
 
-Verify: View-side logic confirms payment with Paystack's servers.
+Consultants manage their schedule via a dedicated dashboard. Clients browse these slots in real-time. The system implements strict validation to prevent double-booking and tracks `max_slots` per availability instance.
 
-Confirm: Upon verification, the booking is activated, and the consultant is notified.
+### B. Secure Payment (Paystack)
 
-C. Post-Session Feedback
-Reviews are locked behind a "Completion" gate. A client can only submit a ReviewForm (Rating 1-5 and Comments) if the Booking.status is marked as COMPLETED. This ensures all reviews are from verified, paying customers.
+Financial transactions are handled through the Paystack - Sandbox/Test Mode:
 
-# 5. Security & Access Control
-Role-Based Access (RBAC): Custom properties is_consultant and is_client protect views.
+* **Initialize:** Generates a unique reference and redirects to the secure payment gateway.
+* **Verify:** Backend logic confirms the success of the transaction with Paystack servers before activating the booking.
+* **Fulfillment:** Once verified, the consultant provides the meeting link via the dashboard.
 
-Lazy Referencing: Models use string references (e.g., 'Booking') to prevent circular import crashes during startup.
+### C. Account Recovery (No-Email Reset)
 
-Identity Protection: Identity fields (client, consultant) are handled via commit=False in the backend to prevent users from manipulating POST data.
+To eliminate dependency on SMTP servers in production, the app uses a **Security Question** recovery system:
 
-Environment Safety: All keys (Paystack Secret, Database URL) are stored in environment variables, never hardcoded.
+* Users choose a question and answer during **Registration**.
+* The `CustomUser` model overrides the `save()` method to normalize (lowercase/strip) answers.
+* The **Forgot Password** flow verifies the answer against the database to grant reset access instantly.
 
-# 6. Deployment & Environment Config
-Required Environment Variables
-To deploy on Render or Coolify, you must set these variables in the dashboard:
+## 5. Security & UI Experience
 
-Production Setup
-Media Files: Profile pictures are stored in MEDIA_ROOT.
+* **RBAC:** Decorators and Mixins ensure users only access dashboards relevant to their role.
+* **Real-time Feedback:** Integrated **SweetAlert2** with the Django Messages framework to provide "Toast" notifications for successful logins, payments, and password resets.
+* **Environment Safety:** Sensitive credentials (DB URL, Paystack Keys, Secret Key) are managed strictly via environment variables.
 
-Static Files: WhiteNoise handles CSS/JS delivery without the need for a separate Nginx server.
+## 6. API Access
 
-Database Migration: The transition from SQLite to PostgreSQL is handled via python manage.py migrate during the build step.
+The platform is fully "Headless" ready. Developers can interact with the system via the REST API.
 
-# 7. Development Status
-✔ Authentication: Custom User, Roles, and Profile Pictures.
+* **Documentation:** Available at  (Django Rest Framework) `/api/client/`, `/api/consultant/` and (Swagger) `/api/docs/`, `/api/schema/`.
+* **Endpoints:** Token-based access to Profiles, Bookings, and Availability lists.
 
-✔ Consultant Tools: Availability Management.
+## 7. Development Status & Features
 
-✔ Client Tools: Booking Dashboard and Session Selection.
+* ✔ **Auth:** Custom User, Roles, and Profile Pictures.
+* ✔ **Security:** Independent Security Question Reset system.
+* ✔ **Consultant Tools:** Bulk Availability Management & Meeting Link Provision.
+* ✔ **Client Tools:** Booking Dashboard & Star Rating Reviews.
+* ✔ **Financials:** Paystack Payment Verification Integration.
+* ✔ **API:** DRF Endpoints with Swagger UI auto-generation.
 
-✔ Financials: Paystack Payment Verification.
+---
 
-✔ Social: Verified Review and Rating System.
+## 8. Local Setup & Installation
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/Foreman-b/Consultant_Web_App.git
+cd Consultant_Web_App
+
+```
+
+
+2. **Create and activate virtual environment:**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+```
+
+
+3. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+
+```
+
+
+4. **Apply Migrations:**
+```bash
+python manage.py migrate
+
+```
+
+
+5. **Run Server:**
+```bash
+python manage.py runserver
+
+```
